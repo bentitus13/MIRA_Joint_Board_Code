@@ -49,6 +49,7 @@
 #define MOSI_PIN GPIO_PIN_5      // Pin A5
 #define MOTOR_DIR_PIN GPIO_PIN_5 // Pin B5
 #define MOTOR_PWM_PIN GPIO_PIN_6 // Pin B6
+#define ISEN_PIN GPIO_PIN_0      // Pin E0
 #define CAN0RX_PIN GPIO_PIN_4    // Pin E4
 #define CAN0TX_PIN GPIO_PIN_5    // Pin E5
 #define HEARTBEAT_PIN GPIO_PIN_2 // Pin F2
@@ -85,12 +86,25 @@ void Motor_Timer(void) {
     Semaphore_post(Motor_Semaphore);
 }
 
+void ADC_Timer(void) {
+    Semaphore_post(ADC_Semaphore);
+}
+
 
 /****************** Tasks *****************/
 void Motor_Drive(void) {
     while(1) {
         Semaphore_pend(Motor_Semaphore, BIOS_WAIT_FOREVER);
         Motor_Out(g_iMotorCtrl);
+        g_iMotorCtrl++;
+        if (g_iMotorCtrl > 5120)
+            g_iMotorCtrl = -5120;
+    }
+}
+
+void ADC_Read(void) {
+    while(1) {
+        Semaphore_pend(ADC_Semaphore, BIOS_WAIT_FOREVER);
     }
 }
 
@@ -137,6 +151,7 @@ void Pin_Setup(void) {
     SysCtlPeripheralEnable(SYSCTL_PERIPH_GPIOB);
     GPIOPinTypeGPIOOutput(GPIO_PORTB_BASE, GPIO_PIN_0 | GPIO_PIN_1 | MOTOR_DIR_PIN);
 
+
     // Initialize SSI
     SysCtlPeripheralEnable(SYSCTL_PERIPH_GPIOA);
     GPIOPinConfigure(GPIO_PA2_SSI0CLK);          // PA2 -> SCLK
@@ -145,12 +160,16 @@ void Pin_Setup(void) {
     GPIOPinConfigure(GPIO_PA5_SSI0TX);           // PA5 -> MOSI
     GPIOPinTypeSSI(GPIO_PORTA_BASE, SCLK_PIN | CS_PIN | MISO_PIN | MOSI_PIN);
 
+
     // Initialize PE4 and PE5 as CAN0Rx and CAN0Tx respectively
     SysCtlPeripheralEnable(SYSCTL_PERIPH_GPIOE);
     GPIOPinConfigure(GPIO_PE4_CAN0RX);
     GPIOPinConfigure(GPIO_PE5_CAN0TX);
     GPIOPinTypeCAN(GPIO_PORTE_BASE, CAN0RX_PIN | CAN0TX_PIN);
 
+    // Initialize PE0 as ADC input
+    SysCtlPeripheralEnable(SYSCTL_PERIPH_GPIOE);
+    GPIOPinTypeADC(GPIO_PORTE_BASE, ISEN_PIN);
 }
 void Motor_Setup(void) {
     // Enable the peripheral
