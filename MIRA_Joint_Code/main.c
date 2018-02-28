@@ -24,11 +24,13 @@
 #include <inc/hw_memmap.h>
 #include <inc/hw_types.h>
 #include <ti/drivers/GPIO.h>
+#include "driverlib/adc.h"
 #include "driverlib/gpio.h"
 #include "driverlib/interrupt.h"
 #include "driverlib/pin_map.h"
 #include "driverlib/pwm.h"
 #include "driverlib/sysctl.h"
+#include "driverlib/timer.h"
 // #include <ti/drivers/I2C.h>
 // #include <ti/drivers/SDSPI.h>
 // #include <ti/drivers/SPI.h>
@@ -69,6 +71,12 @@ void Motor_Setup(void);
 /************* Global Variables ************/
 bool heartbeat = false;
 int g_iMotorCtrl;
+
+
+/******************* HWIs ******************/
+void ADC_ISR(void) {
+
+}
 
 
 /**************** Clock SWIs ***************/
@@ -199,6 +207,61 @@ void Motor_Setup(void) {
     PWMOutputUpdateMode(PWM0_BASE, PWM_OUT_0_BIT, PWM_OUTPUT_MODE_NO_SYNC);
 
     PWMGenEnable(PWM0_BASE, PWM_GEN_0);
+}
+
+void ADC_Setup(void) {
+//    // Enable Timer1
+//    SysCtlPeripheralEnable(SYSCTL_PERIPH_TIMER1);
+//    TimerDisable(TIMER1_BASE, TIMER_BOTH);
+//    // Set clock source
+//    TimerClockSourceSet(TIMER1_BASE, TIMER_CLOCK_SYSTEM);
+//    // Set to periodic
+//    TimerConfigure(TIMER1_BASE, TIMER_CFG_A_PERIODIC);
+//    // Set the prescaler to 1
+//    TimerPrescaleSet(TIMER1_BASE, TIMER_A, 0);
+//    // Set load value
+//    TimerLoadSet(TIMER1_BASE, TIMER_A, 0x0FFFF);
+//    // Set compare value
+////    TimerMatchSet(TIMER1_BASE, TIMER_A, 0x07FFF);
+//    // Enable timeout interrupt
+//    TimerIntEnable(TIMER1_BASE, TIMER_TIMA_TIMEOUT);
+//    // Register ISR
+//    TimerIntRegister(TIMER1_BASE, TIMER_A, &timerISR);
+//    // Enable Timer1A
+//    TimerEnable(TIMER1_BASE, TIMER_A);
+
+    // Initialize ADC0 Module
+    SysCtlPeripheralEnable(SYSCTL_PERIPH_ADC0);
+
+//    // Wait for the module to be ready
+//    while(!SysCtlPeripheralReady(SYSCTL_PERIPH_ADC0)) {
+//    }
+
+    ADCSequenceDisable(ADC0_BASE, 0);
+//    // ADC_PC_SR_125k, ADC_PC_SR_250k, ADC_PC_SR_500k, ADC_PC_SR_1M
+//    ADC0_BASE + ADC_O_PC = (ADC_PC_SR_1M);
+
+    // ADC clock
+    // Source - internal PIOSC at 16MHz, clock rate full for now
+    // Divider - 1 for now, could change later
+    // Maybe use PLL if the frequency isn't high enough
+//    ADCClockConfigSet(ADC0_BASE, ADC_CLOCK_SRC_PIOSC | ADC_CLOCK_RATE_FULL, 2);
+
+    // Trigger when the processor tells it to (one shot)
+    ADCSequenceConfigure(ADC0_BASE, 0, ADC_TRIGGER_ALWAYS, 0);
+
+    // Take a sample and interrupt
+    ADCSequenceStepConfigure(ADC0_BASE, 0, 0, ADC_CTL_CH3 | ADC_CTL_IE | ADC_CTL_END);
+
+    // Oversample at 16x (could go higher maybe? lower?)
+    ADCHardwareOversampleConfigure(ADC0_BASE, 16);
+
+    // Enable sequence0
+    ADCSequenceEnable(ADC0_BASE, 0);
+
+    // Enable interrupts for sequence 0
+    ADCIntEnable(ADC0_BASE, 0);
+//    ADCIntRegister(ADC0_BASE, 0, &getADC);
 }
 
 // Main, call all setup functions and start BIOS
