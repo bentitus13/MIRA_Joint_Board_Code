@@ -1,0 +1,95 @@
+/*
+ *
+ */
+
+/********** General C Header files *********/
+#include <stdbool.h>
+#include <stdint.h>
+
+/********** XDCtools Header files **********/
+#include <xdc/std.h>
+
+/************ BIOS Header files ************/
+#include <ti/sysbios/BIOS.h>
+#include <ti/sysbios/knl/Task.h>
+
+/*********** TI RTOS Header files **********/
+#include <inc/hw_memmap.h>
+#include <ti/drivers/GPIO.h>
+#include "driverlib/pwm.h"
+#include "driverlib/sysctl.h"
+// #include <ti/drivers/I2C.h>
+// #include <ti/drivers/SDSPI.h>
+// #include <ti/drivers/SPI.h>
+// #include <ti/drivers/UART.h>
+// #include <ti/drivers/Watchdog.h>
+// #include <ti/drivers/WiFi.h>
+
+/* Board Header file */
+#include "include/Board.h"
+
+#define TASKSTACKSIZE   512
+
+Task_Struct task0Struct;
+Char task0Stack[TASKSTACKSIZE];
+
+/*
+ *  ======== heartBeatFxn ========
+ *  Toggle the Board_LED0. The Task_sleep is determined by arg0 which
+ *  is configured for the heartBeat Task instance.
+ */
+Void heartBeatFxn(UArg arg0, UArg arg1)
+{
+    while (1) {
+        Task_sleep((UInt)arg0);
+        GPIO_toggle(Board_LED0);
+    }
+}
+
+void Motor_setup(void) {
+    SysCtlPeripheralEnable(SYSCTL_PERIPH_PWM0);
+
+    SysCtlPWMClockSet(SYSCTL_PWMDIV_32);
+//    PWMClockSet(PWM_BASE, PWM_SYSCLK_DIV_64);
+
+    PWMDeadBandDisable(PWM0_BASE, PWM_GEN_0);
+
+    PWMGenConfigure(PWM0_BASE, PWM_GEN_0, PWM_GEN_MODE_DOWN | PWM_GEN_MODE_NO_SYNC);
+
+    PWMGenPeriodSet(PWM0_BASE, PWM_GEN_0, 5120);
+
+    PWMPulseWidthSet(PWM0_BASE, PWM_GEN_0, 2560);
+
+    PWMOutputState(PWM0_BASE, PWM_OUT_0_BIT, true);
+
+    PWMOutputUpdateMode(PWM0_BASE, PWM_OUT_0_BIT, PWM_OUTPUT_MODE_NO_SYNC);
+
+    PWMGenEnable(PWM0_BASE, PWM_GEN_0);
+}
+
+/*
+ *  ======== main ========
+ */
+int main(void)
+{
+    /* Call board init functions */
+    Board_initGeneral();
+    Board_initGPIO();
+    // Board_initI2C();
+    // Board_initSDSPI();
+    // Board_initSPI();
+    // Board_initUART();
+    // Board_initUSB(Board_USBDEVICE);
+    // Board_initWatchdog();
+    // Board_initWiFi();
+
+    Motor_setup();
+
+    /* Turn on user LED  */
+    GPIO_write(Board_LED0, Board_LED_ON);
+
+    /* Start BIOS */
+    BIOS_start();
+
+    return (0);
+}

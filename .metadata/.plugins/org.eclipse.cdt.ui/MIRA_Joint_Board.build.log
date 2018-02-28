@@ -1,0 +1,59 @@
+
+**** Build of configuration Debug for project MIRA_Joint_Board ****
+
+"C:\\ti\\ccsv7\\utils\\bin\\gmake" -k -j 4 all -O 
+gmake[1]: Entering directory 'C:/Users/Ben/Documents/MQP_Code/MIRA_Joint_Board_Code/MIRA_Joint_Board/Debug'
+'Building file: ../app.cfg'
+'Invoking: XDCtools'
+"C:/ti/xdctools_3_50_01_12_core/xs" --xdcpath="C:/ti/tirtos_tivac_2_16_00_08/packages;C:/ti/tirtos_tivac_2_16_00_08/products/tidrivers_tivac_2_16_00_08/packages;C:/ti/tirtos_tivac_2_16_00_08/products/bios_6_45_01_29/packages;C:/ti/tirtos_tivac_2_16_00_08/products/ndk_2_25_00_09/packages;C:/ti/tirtos_tivac_2_16_00_08/products/uia_2_00_05_50/packages;C:/ti/tirtos_tivac_2_16_00_08/products/ns_1_11_00_10/packages;C:/ti/ccsv7/ccs_base;" xdc.tools.configuro -o configPkg -t ti.targets.arm.elf.M4F -p ti.platforms.tiva:TM4C123GH6PM -r debug -c "C:/ti/ccsv7/tools/compiler/ti-cgt-arm_17.9.0.STS" --compileOptions "-g --optimize_with_debug" "../app.cfg"
+'Building file: ../main.c'
+'Invoking: ARM Compiler'
+"C:/ti/ccsv7/tools/compiler/ti-cgt-arm_17.9.0.STS/bin/armcl" -mv7M4 --code_state=16 --float_support=FPv4SPD16 -me --include_path="C:/Users/Ben/Documents/MQP_Code/MIRA_Joint_Board_Code/MIRA_Joint_Board" --include_path="C:/ti/ccsv7/tools/compiler/ti-cgt-arm_17.9.0.STS/include" --define=ccs="ccs" --define=PART_TM4C123GH6PM -g --gcc --diag_warning=225 --diag_warning=255 --diag_wrap=off --display_error_number --gen_func_subsections=on --abi=eabi --preproc_with_compile --preproc_dependency="main.d" --cmd_file="configPkg/compiler.opt" "../main.c"
+
+>> Compilation failure
+subdir_rules.mk:23: recipe for target 'main.obj' failed
+"C:/ti/xdctools_3_50_03_33_core/packages/xdc/cfg/global.h", line 39: fatal error #1965: cannot open source file "C:/Users/Ben/Documents/MQP_Code/MIRA_Joint_Board_Code/MIRA_Joint_Board/Debug/configPkg/package/cfg/app_pem4f.h"
+1 catastrophic error detected in the compilation of "../main.c".
+Compilation terminated.
+gmake: *** [main.obj] Error 1
+making package.mak (because of .xdcenv.mak) ...
+configuring app.xem4f from package/cfg/app_pem4f.cfg ...
+generating custom ti.sysbios library makefile ... 
+Starting build of library sources ...
+making C:/Users/Ben/Documents/MQP_Code/MIRA_Joint_Board_Code/MIRA_Joint_Board/src/sysbios/sysbios.aem4f ...
+gmake[1]: Entering directory `C:/Users/Ben/Documents/MQP_Code/MIRA_Joint_Board_Code/MIRA_Joint_Board/src/sysbios'
+clem4f C:/ti/tirtos_tivac_2_16_00_08/products/bios_6_45_01_29/packages/ti/sysbios/BIOS.c ...
+asmem4f C:/ti/tirtos_tivac_2_16_00_08/products/bios_6_45_01_29/packages/ti/sysbios/family/arm/m3/Hwi_asm.sv7M ...
+asmem4f C:/ti/tirtos_tivac_2_16_00_08/products/bios_6_45_01_29/packages/ti/sysbios/family/arm/m3/Hwi_asm_switch.sv7M ...
+asmem4f C:/ti/tirtos_tivac_2_16_00_08/products/bios_6_45_01_29/packages/ti/sysbios/family/arm/m3/IntrinsicsSupport_asm.sv7M ...
+asmem4f C:/ti/tirtos_tivac_2_16_00_08/products/bios_6_45_01_29/packages/ti/sysbios/family/arm/m3/TaskSupport_asm.sv7M ...
+arem4f BIOS.obj m3_Hwi_asm.obj m3_Hwi_asm_switch.obj m3_IntrinsicsSupport_asm.obj m3_TaskSupport_asm.obj ...
+gmake[1]: Leaving directory `C:/Users/Ben/Documents/MQP_Code/MIRA_Joint_Board_Code/MIRA_Joint_Board/src/sysbios'
+Build of libraries done.
+clem4f package/cfg/app_pem4f.c ...
+
+>> Compilation failure
+subdir_rules.mk:12: recipe for target 'build-1412332817-inproc' failed
+"C:/ti/tirtos_tivac_2_16_00_08/products/bios_6_45_01_29/packages/ti/sysbios/interfaces/ITimestamp.h", line 142: warning: a value of type "const xdc_runtime_Types_Base *" cannot be assigned to an entity of type "xdc_runtime_Types_Base *"
+"C:/ti/tirtos_tivac_2_16_00_08/products/bios_6_45_01_29/packages/ti/sysbios/interfaces/ITimestamp.h", line 142: warning: a value of type "const xdc_runtime_Types_Base *" cannot be assigned to an entity of type "xdc_runtime_Types_Base *"
+"C:/ti/tirtos_tivac_2_16_00_08/products/bios_6_45_01_29/packages/ti/sysbios/interfaces/ITimestamp.h", line 162: warning: a value of type "const xdc_runtime_Types_Base *" cannot be assigned to an entity of type "xdc_runtime_Types_Base *"
+"C:/ti/tirtos_tivac_2_16_00_08/products/bios_6_45_01_29/packages/ti/sysbios/interfaces/ITimestamp.h", line 162: warning: a value of type "const xdc_runtime_Types_Base *" cannot be assigned to an entity of type "xdc_runtime_Types_Base *"
+"C:/ti/tirtos_tivac_2_16_00_08/products/bios_6_45_01_29/packages/ti/sysbios/interfaces/ITimestamp.h", line 142: warning: a value of type "const xdc_runtime_Types_Base *" cannot be assigned to an entity of type "xdc_runtime_Types_Base *"
+"C:/ti/tirtos_tivac_2_16_00_08/products/bios_6_45_01_29/packages/ti/sysbios/interfaces/ITimestamp.h", line 142: warning: a value of type "const xdc_runtime_Types_Base *" cannot be assigned to an entity of type "xdc_runtime_Types_Base *"
+"C:/ti/tirtos_tivac_2_16_00_08/products/bios_6_45_01_29/packages/ti/sysbios/interfaces/ITimestamp.h", line 162: warning: a value of type "const xdc_runtime_Types_Base *" cannot be assigned to an entity of type "xdc_runtime_Types_Base *"
+"C:/ti/tirtos_tivac_2_16_00_08/products/bios_6_45_01_29/packages/ti/sysbios/interfaces/ITimestamp.h", line 162: warning: a value of type "const xdc_runtime_Types_Base *" cannot be assigned to an entity of type "xdc_runtime_Types_Base *"
+"package/cfg/app_pem4f.c", line 4098: warning: a value of type "const __T1_ti_sysbios_knl_Idle_funcList *" cannot be used to initialize an entity of type "ti_sysbios_knl_Idle_FuncPtr *"
+"package/cfg/app_pem4f.c", line 4102: warning: a value of type "const __T1_ti_sysbios_knl_Idle_coreList *" cannot be used to initialize an entity of type "xdc_UInt *"
+"package/cfg/app_pem4f.c", line 14505: error: declaration is incompatible with "xdc_Ptr ti_sysbios_BIOS_RtsGateProxy_Proxy__delegate__S(void)" (declared at line 244 of "C:/ti/tirtos_tivac_2_16_00_08/products/bios_6_45_01_29/packages/ti/sysbios/package/BIOS_RtsGateProxy.h")
+"package/cfg/app_pem4f.c", line 14670: fatal error: #error directive: The package 'ti.sysbios.family.arm.lm4' is not compatible with XDCtools used in this build. Please rebuild the package with XDCtools 3.50 or later.
+1 error and 1 catastrophic error detected in the compilation of "package/cfg/app_pem4f.c".
+Compilation terminated.
+gmake.exe: *** [package/cfg/app_pem4f.oem4f] Error 1
+js: "C:/ti/xdctools_3_50_01_12_core/packages/xdc/tools/Cmdr.xs", line 52: Error: xdc.tools.configuro: configuration failed due to earlier errors (status = 2); 'linker.cmd' deleted.
+gmake[1]: *** [build-1412332817-inproc] Error 1
+gmake: *** [build-1412332817] Error 2
+gmake[1]: Leaving directory 'C:/Users/Ben/Documents/MQP_Code/MIRA_Joint_Board_Code/MIRA_Joint_Board/Debug'
+subdir_rules.mk:9: recipe for target 'build-1412332817' failed
+gmake: Target 'all' not remade because of errors.
+
+**** Build Finished ****
