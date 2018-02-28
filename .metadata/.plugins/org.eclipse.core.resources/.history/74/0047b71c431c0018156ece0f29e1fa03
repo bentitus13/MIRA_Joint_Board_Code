@@ -108,12 +108,6 @@ void ADC_Read(void) {
     }
 }
 
-void Init_Stuff(void) {
-    while(1) {
-        Semaphore_pend(Init_Semaphore, BIOS_WAIT_FOREVER);
-    }
-}
-
 
 /************* Helper Functions ************/
 void Motor_Out(int spd) {
@@ -182,7 +176,7 @@ void Motor_Setup(void) {
     SysCtlPeripheralEnable(SYSCTL_PERIPH_PWM0);
 
     // Set clock to system clock with 32x input divider
-    SysCtlPWMClockSet(SYSCTL_PWMDIV_16);
+    SysCtlPWMClockSet(SYSCTL_PWMDIV_32);
 //    PWMClockSet(PWM_BASE, PWM_SYSCLK_DIV_64);
 
     //

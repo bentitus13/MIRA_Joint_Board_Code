@@ -589,7 +589,3 @@ var task1Params = new Task.Params();
 task1Params.instance.name = "ADC_Task";
 task1Params.priority = 10;
 Program.global.ADC_Task = Task.create("&ADC_Read", task1Params);
-var task2Params = new Task.Params();
-task2Params.instance.name = "Init_Task";
-task2Params.priority = 15;
-Program.global.Init_Task = Task.create("&Init_Stuff", task2Params);

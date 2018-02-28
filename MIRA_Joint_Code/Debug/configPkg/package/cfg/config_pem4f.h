@@ -34,6 +34,9 @@ extern const ti_sysbios_knl_Semaphore_Handle Init_Semaphore;
 #include <ti/sysbios/knl/Task.h>
 extern const ti_sysbios_knl_Task_Handle ADC_Task;
 
+#include <ti/sysbios/knl/Task.h>
+extern const ti_sysbios_knl_Task_Handle Init_Task;
+
 extern int xdc_runtime_Startup__EXECFXN__C;
 
 extern int xdc_runtime_Startup__RESETFXN__C;

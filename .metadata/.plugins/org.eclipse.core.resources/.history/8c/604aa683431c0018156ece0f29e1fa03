@@ -593,3 +593,6 @@ var task2Params = new Task.Params();
 task2Params.instance.name = "Init_Task";
 task2Params.priority = 15;
 Program.global.Init_Task = Task.create("&Init_Stuff", task2Params);
+var task3Params = new Task.Params();
+task3Params.instance.name = "task3";
+Program.global.task3 = Task.create(null, task3Params);
