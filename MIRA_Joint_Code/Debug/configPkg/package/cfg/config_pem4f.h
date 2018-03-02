@@ -40,6 +40,21 @@ extern const ti_sysbios_knl_Task_Handle Init_Task;
 #include <ti/sysbios/family/arm/m3/Hwi.h>
 extern const ti_sysbios_family_arm_m3_Hwi_Handle ADC_HWI;
 
+#include <ti/sysbios/family/arm/m3/Hwi.h>
+extern const ti_sysbios_family_arm_m3_Hwi_Handle UART_HWI;
+
+#include <ti/sysbios/family/arm/m3/Hwi.h>
+extern const ti_sysbios_family_arm_m3_Hwi_Handle SSI_HWI;
+
+#include <ti/sysbios/knl/Clock.h>
+extern const ti_sysbios_knl_Clock_Handle SSI_Clock;
+
+#include <ti/sysbios/knl/Semaphore.h>
+extern const ti_sysbios_knl_Semaphore_Handle SSI_Semaphore;
+
+#include <ti/sysbios/knl/Task.h>
+extern const ti_sysbios_knl_Task_Handle SSI_Task;
+
 extern int xdc_runtime_Startup__EXECFXN__C;
 
 extern int xdc_runtime_Startup__RESETFXN__C;

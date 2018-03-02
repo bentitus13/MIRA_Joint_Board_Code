@@ -2,40 +2,15 @@
 **** Build of configuration Debug for project MIRA_Joint_Code ****
 
 "C:\\ti\\ccsv7\\utils\\bin\\gmake" -k -j 4 all -O 
-        1 file(s) copied.
 making ../src/sysbios/sysbios.aem4f ...
-gmake[1]: Entering directory 'C:/Users/Ben/Documents/MQP_Code/MIRA_Joint_Board_Code/MIRA_Joint_Code/Debug'
-'Building file: ../config.cfg'
-'Invoking: XDCtools'
-"C:/ti/xdctools_3_32_02_25_core/xs" --xdcpath="C:/ti/tirtos_tivac_2_16_00_08/packages;C:/ti/tirtos_tivac_2_16_00_08/products/tidrivers_tivac_2_16_00_08/packages;C:/ti/tirtos_tivac_2_16_00_08/products/bios_6_45_01_29/packages;C:/ti/tirtos_tivac_2_16_00_08/products/ndk_2_25_00_09/packages;C:/ti/tirtos_tivac_2_16_00_08/products/uia_2_00_05_50/packages;C:/ti/tirtos_tivac_2_16_00_08/products/ns_1_11_00_10/packages;C:/ti/ccsv7/ccs_base;" xdc.tools.configuro -o configPkg -t ti.targets.arm.elf.M4F -p ti.platforms.tiva:TM4C123GH6PM -r release -c "C:/ti/ccsv7/tools/compiler/ti-cgt-arm_17.9.0.STS" --compileOptions "-mv7M4 --code_state=16 --float_support=FPv4SPD16 -me --include_path=\"C:/Users/Ben/Documents/MQP_Code/MIRA_Joint_Board_Code/MIRA_Joint_Code\" --include_path=\"C:/Users/Ben/Documents/MQP_Code/MIRA_Joint_Board_Code/MIRA_Joint_Code\" --include_path=\"C:/ti/tirtos_tivac_2_16_00_08/products/TivaWare_C_Series-2.1.1.71b\" --include_path=\"C:/ti/tirtos_tivac_2_16_00_08/products/bios_6_45_01_29/packages/ti/sysbios/posix\" --include_path=\"C:/ti/ccsv7/tools/compiler/ti-cgt-arm_17.9.0.STS/include\" --define=ccs=\"ccs\" --define=PART_TM4C123GH6PM --define=ccs --define=TIVAWARE -g --gcc --diag_warning=225 --diag_warning=255 --diag_wrap=off --display_error_number --gen_func_subsections=on --abi=eabi  " "../config.cfg"
 gmake[1]: Nothing to be done for 'all'.
-configuring config.xem4f from package/cfg/config_pem4f.cfg ...
-generating custom ti.sysbios library makefile ... 
-Starting build of library sources ...
-making C:/Users/Ben/Documents/MQP_Code/MIRA_Joint_Board_Code/MIRA_Joint_Code/src/sysbios/sysbios.aem4f ...
-gmake[1]: Entering directory `C:/Users/Ben/Documents/MQP_Code/MIRA_Joint_Board_Code/MIRA_Joint_Code/src/sysbios'
-gmake[1]: Nothing to be done for `all'.
-gmake[1]: Leaving directory `C:/Users/Ben/Documents/MQP_Code/MIRA_Joint_Board_Code/MIRA_Joint_Code/src/sysbios'
-Build of libraries done.
-clem4f package/cfg/config_pem4f.c ...
-"package/cfg/config_pem4f.c", line 15027: warning #112-D: statement is unreachable
-"package/cfg/config_pem4f.c", line 15652: warning #112-D: statement is unreachable
-'Finished building: ../config.cfg'
-' '
-gmake[1]: Leaving directory 'C:/Users/Ben/Documents/MQP_Code/MIRA_Joint_Board_Code/MIRA_Joint_Code/Debug'
-        1 file(s) copied.
-'Building file: ../EK_TM4C123GXL.c'
 'Building file: ../main.c'
-making ../src/sysbios/sysbios.aem4f ...
 'Invoking: ARM Compiler'
-'Invoking: ARM Compiler'
-"C:/ti/ccsv7/tools/compiler/ti-cgt-arm_17.9.0.STS/bin/armcl" -mv7M4 --code_state=16 --float_support=FPv4SPD16 -me --include_path="C:/Users/Ben/Documents/MQP_Code/MIRA_Joint_Board_Code/MIRA_Joint_Code" --include_path="C:/Users/Ben/Documents/MQP_Code/MIRA_Joint_Board_Code/MIRA_Joint_Code" --include_path="C:/ti/tirtos_tivac_2_16_00_08/products/TivaWare_C_Series-2.1.1.71b" --include_path="C:/ti/tirtos_tivac_2_16_00_08/products/bios_6_45_01_29/packages/ti/sysbios/posix" --include_path="C:/ti/ccsv7/tools/compiler/ti-cgt-arm_17.9.0.STS/include" --define=ccs="ccs" --define=PART_TM4C123GH6PM --define=ccs --define=TIVAWARE -g --gcc --diag_warning=225 --diag_warning=255 --diag_wrap=off --display_error_number --gen_func_subsections=on --abi=eabi --preproc_with_compile --preproc_dependency="EK_TM4C123GXL.d" --cmd_file="configPkg/compiler.opt" "../EK_TM4C123GXL.c"
 "C:/ti/ccsv7/tools/compiler/ti-cgt-arm_17.9.0.STS/bin/armcl" -mv7M4 --code_state=16 --float_support=FPv4SPD16 -me --include_path="C:/Users/Ben/Documents/MQP_Code/MIRA_Joint_Board_Code/MIRA_Joint_Code" --include_path="C:/Users/Ben/Documents/MQP_Code/MIRA_Joint_Board_Code/MIRA_Joint_Code" --include_path="C:/ti/tirtos_tivac_2_16_00_08/products/TivaWare_C_Series-2.1.1.71b" --include_path="C:/ti/tirtos_tivac_2_16_00_08/products/bios_6_45_01_29/packages/ti/sysbios/posix" --include_path="C:/ti/ccsv7/tools/compiler/ti-cgt-arm_17.9.0.STS/include" --define=ccs="ccs" --define=PART_TM4C123GH6PM --define=ccs --define=TIVAWARE -g --gcc --diag_warning=225 --diag_warning=255 --diag_wrap=off --display_error_number --gen_func_subsections=on --abi=eabi --preproc_with_compile --preproc_dependency="main.d" --cmd_file="configPkg/compiler.opt" "../main.c"
-gmake[2]: Nothing to be done for 'all'.
 'Finished building: ../main.c'
 ' '
-'Finished building: ../EK_TM4C123GXL.c'
-' '
+making ../src/sysbios/sysbios.aem4f ...
+gmake[2]: Nothing to be done for 'all'.
 'Building target: MIRA_Joint_Code.out'
 'Invoking: ARM Linker'
 "C:/ti/ccsv7/tools/compiler/ti-cgt-arm_17.9.0.STS/bin/armcl" -mv7M4 --code_state=16 --float_support=FPv4SPD16 -me --define=ccs="ccs" --define=PART_TM4C123GH6PM --define=ccs --define=TIVAWARE -g --gcc --diag_warning=225 --diag_warning=255 --diag_wrap=off --display_error_number --gen_func_subsections=on --abi=eabi -z -m"MIRA_Joint_Code.map" --heap_size=0 --stack_size=512 -i"C:/ti/ccsv7/tools/compiler/ti-cgt-arm_17.9.0.STS/lib" -i"C:/ti/ccsv7/tools/compiler/ti-cgt-arm_17.9.0.STS/include" --reread_libs --diag_wrap=off --display_error_number --warn_sections --xml_link_info="MIRA_Joint_Code_linkInfo.xml" --rom_model -o "MIRA_Joint_Code.out" "./EK_TM4C123GXL.obj" "./main.obj" "../EK_TM4C123GXL.cmd" -l"configPkg/linker.cmd" -l"C:/ti/tirtos_tivac_2_16_00_08/products/TivaWare_C_Series-2.1.1.71b/grlib/ccs/Debug/grlib.lib" -l"C:/ti/tirtos_tivac_2_16_00_08/products/TivaWare_C_Series-2.1.1.71b/usblib/ccs/Debug/usblib.lib" -l"C:/ti/tirtos_tivac_2_16_00_08/products/TivaWare_C_Series-2.1.1.71b/driverlib/ccs/Debug/driverlib.lib" -llibc.a -llibc.a 
