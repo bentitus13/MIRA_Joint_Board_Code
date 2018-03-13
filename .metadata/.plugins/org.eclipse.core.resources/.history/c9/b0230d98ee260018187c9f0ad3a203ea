@@ -443,8 +443,6 @@ int main(void) {
     // Call all setup functions
     Pin_Setup();
     Motor_Setup();
-    ADC_Setup();
-    SSI_Setup();
     UART_Setup();
 
     // Enable interrupts
