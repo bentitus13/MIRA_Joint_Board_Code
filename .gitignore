@@ -51,10 +51,10 @@ Module.symvers
 Mkfile.old
 dkms.conf
 
-*\Debug\*
-*\Release\*
-*\.xdchelp\*
-*\.config\*
-*\.launches\*
-.jxbrowser-data\*
-.metadata\*
+*/Debug/*
+*/Release/*
+*/.xdchelp/*
+*/.config/*
+*/.launches/*
+.jxbrowser-data/*
+.metadata/*
