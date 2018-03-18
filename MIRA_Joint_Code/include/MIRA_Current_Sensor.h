@@ -59,7 +59,6 @@
 
 
 /***************** Defines *****************/
-#define READ_ANGLE     0x3FFF     // Data to send over SSI to read angle from AS5055
 
 #define TASKSTACKSIZE   512
 
@@ -69,17 +68,19 @@
 void Current_Sensor_ISR(void);
 
 // SWIs
+void Current_Sensor_Timer(void);
 
 // Tasks
+void Current_Sensor_Calculate(void);
 
 // Helper Functions
 
 // Setup Functions
-void ADC_Setup(void);
+void Current_Sensor_Setup(void);
 
 
 /************* Global Variables ************/
-
+volatile int Current_Sensor_Value;
 
 
 

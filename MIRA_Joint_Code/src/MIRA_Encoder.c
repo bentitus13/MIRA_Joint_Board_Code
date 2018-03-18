@@ -11,7 +11,9 @@
 
 /******************* HWIs ******************/
 void SSI_ISR(void) {
-
+    SSIDataGet(SSI0_BASE, &Encoder_Value);
+    Encoder_Value &= 0x0FFF;
+    Joint Angle = 360. / 4096. * (Encoder_Value - Encoder_Offset);
 }
 
 
@@ -25,6 +27,7 @@ void SSI_Timer(void) {
 void SSI_Transmit(void) {
     while(1) {
         Semaphore_pend(SSI_Semaphore, BIOS_WAIT_FOREVER);
+        SSI_Send(READ_ANGLE);
     }
 }
 

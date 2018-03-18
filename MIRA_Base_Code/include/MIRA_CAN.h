@@ -1,15 +1,13 @@
 /*
- * MIRA_Load_Cell.h
+ * MIRA_CAN.h
  *
  *  Created on: Mar 13, 2018
  *      Edited: Mar 17, 2018
  *      Author: Ben Titus
  */
 
-#ifndef INCLUDE_MIRA_LOAD_CELL_H_
-#define INCLUDE_MIRA_LOAD_CELL_H_
-
-
+#ifndef INCLUDE_MIRA_CAN_H_
+#define INCLUDE_MIRA_CAN_H_
 
 /********** General C Header files *********/
 #include <stdbool.h>
@@ -64,22 +62,23 @@
 
 /*********** Function Prototypes ***********/
 // HWIs
-void Load_Cell_ISR(void);
+void CAN_ISR(void);
 
 // SWIs
-void Load_Cell_Timer(void);
+void CAN_Timer(void);
 
 // Tasks
-void Load_Cell_Calculate(void);
+void CAN_Task(void);
 
 // Helper Functions
 
+
 // Setup Functions
-void ADC_Setup(void);
+void CAN_Setup(void);
 
 
 /************* Global Variables ************/
-volatile int Load_Cell_Value;
 
 
-#endif /* INCLUDE_MIRA_LOAD_CELL_H_ */
+
+#endif /* INCLUDE_MIRA_CAN_H_ */

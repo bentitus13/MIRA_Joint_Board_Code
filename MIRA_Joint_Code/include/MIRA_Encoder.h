@@ -59,16 +59,19 @@
 
 
 /***************** Defines *****************/
-#define READ_ANGLE     0x3FFF     // Data to send over SSI to read angle from AS5055
+#define READ_ANGLE        0x3FFF         // Data to send over SSI to read angle from AS5055
+#define ENCODER_WRAP(val) (0x0FFF & val) // Wrap encoder value to 0-4096
 
 
 /*********** Function Prototypes ***********/
 // HWIs
+void SSI_ISR(void);
 
 // SWIs
 void SSI_Timer(void);
 
 // Tasks
+void SSI_Transmit(void);
 
 // Helper Functions
 void SSI_Send(uint16_t num);
@@ -78,7 +81,14 @@ void SSI_Setup(void);
 
 
 /************* Global Variables ************/
+// Joint angle read in by encoder
+volatile int Encoder_Value;
 
+// Offset for tuning the encoder
+int Encoder_Offset;
+
+// Actual joint angle
+float Joint_Angle;
 
 
 #endif /* INCLUDE_MIRA_ENCODER_H_ */

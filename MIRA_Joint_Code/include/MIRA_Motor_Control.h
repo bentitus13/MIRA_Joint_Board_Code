@@ -10,16 +10,6 @@
 #define INCLUDE_MIRA_MOTOR_CONTROL_H_
 
 
-#define MOTOR_MAX_SPD  4096       // Max speed of motor (PWM timer reset value)
-
-
-
-
-/*
- *
- */
-
-
 /********** General C Header files *********/
 #include <stdbool.h>
 #include <stdint.h>
@@ -69,6 +59,7 @@
 
 
 /***************** Defines *****************/
+#define MOTOR_MAX_SPD  4096       // Max speed of motor (PWM timer reset value)
 
 
 /*********** Function Prototypes ***********/

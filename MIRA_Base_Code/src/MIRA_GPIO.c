@@ -60,8 +60,7 @@ void Pin_Setup(void) {
     SysCtlPeripheralEnable(SYSCTL_PERIPH_GPIOE);
     GPIOPinConfigure(GPIO_PE4_CAN0RX);
     GPIOPinConfigure(GPIO_PE5_CAN0TX);
-    GPIOPinTypeCAN(GPIO_PORTE_BASE, GPIO_PIN_4 | GPIO_PIN_5);
-
+    GPIOPinTypeCAN(GPIO_PORTE_BASE, CAN0RX_PIN | CAN0TX_PIN);
 
     // Initialize PE0 as ADC input
     SysCtlPeripheralEnable(SYSCTL_PERIPH_GPIOE);
