@@ -50,7 +50,8 @@
 
 
 /***************** Defines *****************/
-#define TASKSTACKSIZE   512
+#define TASKSTACKSIZE    512
+#define SAMPLE_FREQUENCY 1000.
 
 
 /*********** Function Prototypes ***********/
@@ -119,7 +120,7 @@ void Idle_Function(void) {
 void PID_Calc(void) {
     float Error = 0.0;
     float Error_Sum = 0.0;
-    float P_Val, I_Val, D_Val;
+    float P_Val, I_Val, D_Val, Floating_Setpoint;
     float Past_Error = 0.0;
     int i;
     while(1) {
@@ -133,13 +134,13 @@ void PID_Calc(void) {
             Error_Sum += Past_Errors[i];
         }
 
-        Setpoint = (0xFFF & (Setpoint - Encoder_Offset)) * 360. / 4096.;
-        Error = Setpoint - Joint_Angle;
+        Floating_Setpoint = (0xFFF & (Setpoint - Encoder_Offset)) * 360. / 4096.;
+        Error = Floating_Setpoint - Joint_Angle;
         Error_Sum += Error;
 
         P_Val = Kp * Error;
-        I_Val = Ki * Error_Sum;
-        D_Val = Kd * (Error - Past_Error);
+        I_Val = Ki * Error_Sum / SAMPLE_FREQUENCY;
+        D_Val = Kd * (Error - Past_Error) * SAMPLE_FREQUENCY;
 
         if (P_Val > 4095) {
             P_Val = 4095;
@@ -182,9 +183,9 @@ int main(void) {
     CAN_Setup();
 
     Setpoint = 2048;
-    Kp = 0.5;
-    Ki = 0.1;
-    Kd = 0.1;
+    Kp = 45;
+    Ki = 8;
+    Kd = 3;
 
     // Start the BIOS
     BIOS_start();

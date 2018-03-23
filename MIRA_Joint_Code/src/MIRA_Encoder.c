@@ -15,6 +15,8 @@ void SSI_ISR(void) {
     Encoder_Value &= 0x1FFE;
     Encoder_Value = Encoder_Value >> 1;
     if (Encoder_Value < 4095 && Encoder_Value > 0) {
+        // Exponential filter to clean out the spikes in encoder reading
+        Encoder_Value = (1-ALPHA) * Encoder_Value + ALPHA * Encoder_Values[Encoder_Index];
         Encoder_Index = 0x07 & (Encoder_Index + 1);
         Encoder_Values[Encoder_Index] = Encoder_Value;
     }
@@ -32,16 +34,30 @@ void SSI_Transmit(void) {
     int i;
     uint32_t Temp_Value = 0;
     while(1) {
+        // Wait for semaphore
         Semaphore_pend(SSI_Semaphore, BIOS_WAIT_FOREVER);
+
+        // Transmit SSI to request new joint angle
         SSI_Send(READ_ANGLE);
+
+        // Store joint angle in next item of past joint angles
         Past_Angles[Past_Angle_Index] = Joint_Angle;
-        Past_Angle_Index = (32-1) & (Past_Angle_Index + 1);
+
+        // Increment and wrap index
+        Past_Angle_Index = (0x1F) & (Past_Angle_Index + 1);
+
+        // Average last 8 values
         Temp_Value = 0;
         for (i = 0; i < 8; i++) {
             Temp_Value += Encoder_Values[i];
         }
         Temp_Value = Temp_Value / 8;
-        Joint_Angle = 360. / 4096. * (0x0FFF & (Temp_Value - Encoder_Offset));
+
+        // Offset Temp_Value by the encoder home position offset
+        Temp_Value = (0x0FFF & (Temp_Value - Encoder_Offset));
+
+        // Convert Temp_Value to angle from home position
+        Joint_Angle = 360. / 4096. * Temp_Value;
     }
 }
 
