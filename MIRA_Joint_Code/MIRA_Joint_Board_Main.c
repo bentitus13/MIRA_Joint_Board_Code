@@ -37,16 +37,10 @@
 #include "driverlib/sysctl.h"
 #include "driverlib/timer.h"
 #include "driverlib/uart.h"
-// #include <ti/drivers/I2C.h>
-// #include <ti/drivers/SDSPI.h>
-// #include <ti/drivers/SPI.h>
-// #include <ti/drivers/UART.h>
-// #include <ti/drivers/Watchdog.h>
-// #include <ti/drivers/WiFi.h>
 
 
 /************ Local Header files ***********/
-#include "include/Board.h"
+//#include "include/Board.h"
 #include "include/MIRA_CAN.h"
 #include "include/MIRA_Current_Sensor.h"
 #include "include/MIRA_Encoder.h"
@@ -64,8 +58,12 @@
 
 // SWIs
 void Heartbeat(void);
+void PID_Timer(void);
 
 // Tasks
+void Init_Stuff(void);
+void Idle_Function(void);
+void PID_Calc(void);
 
 // Helper Functions
 
@@ -74,6 +72,11 @@ void Heartbeat(void);
 
 /************* Global Variables ************/
 bool heartbeat = false;
+int idle_count;
+float Kp, Ki, Kd;
+uint32_t Setpoint;
+float Past_Errors[32];
+uint32_t Past_Error_Index;
 
 
 /******************* HWIs ******************/
@@ -91,6 +94,10 @@ void Heartbeat(void) {
     }
 }
 
+void PID_Timer(void) {
+    Semaphore_post(PID_Semaphore);
+}
+
 
 /****************** Tasks *****************/
 // Task that can initialize runtime events
@@ -100,6 +107,56 @@ void Init_Stuff(void) {
         Semaphore_pend(Init_Semaphore, BIOS_WAIT_FOREVER);
         // Enable interrupts
         IntMasterEnable();
+    }
+}
+
+void Idle_Function(void) {
+    while(1) {
+        idle_count++;
+    }
+}
+
+void PID_Calc(void) {
+    float Error = 0.0;
+    float Error_Sum = 0.0;
+    float P_Val, I_Val, D_Val;
+    float Past_Error = 0.0;
+    int i;
+    while(1) {
+        Semaphore_pend(PID_Semaphore, BIOS_WAIT_FOREVER);
+        Past_Error = Error;
+        Past_Errors[Past_Error_Index] = Error;
+        Past_Error_Index = (32-1) & (Past_Error_Index + 1);
+
+        Error_Sum = 0;
+        for (i = 0; i < 32; i++) {
+            Error_Sum += Past_Errors[i];
+        }
+
+        Setpoint = (0xFFF & (Setpoint - Encoder_Offset)) * 360. / 4096.;
+        Error = Setpoint - Joint_Angle;
+        Error_Sum += Error;
+
+        P_Val = Kp * Error;
+        I_Val = Ki * Error_Sum;
+        D_Val = Kd * (Error - Past_Error);
+
+        if (P_Val > 4095) {
+            P_Val = 4095;
+        } else if (P_Val < -4095) {
+            P_Val = -4095;
+        }
+        if (I_Val > 4095) {
+            I_Val = 4095;
+        } else if (I_Val < -4095) {
+            I_Val = -4095;
+        }
+        if (D_Val > 4095) {
+            D_Val = 4095;
+        } else if (D_Val < -4095) {
+            D_Val = -4095;
+        }
+        Motor_Control = P_Val + I_Val + D_Val;
     }
 }
 
@@ -114,14 +171,20 @@ void Init_Stuff(void) {
 int main(void) {
     // Disable interrupts
     IntMasterDisable();
+    SysCtlClockSet(SYSCTL_SYSDIV_2_5|SYSCTL_USE_PLL|SYSCTL_OSC_MAIN|SYSCTL_XTAL_16MHZ);
 
     // Call all setup functions
     Pin_Setup();
     Motor_Setup();
-    ADC_Setup();
+    Current_Sensor_Setup();
+    Load_Cell_Setup();
     SSI_Setup();
-    UART_Setup();
+    CAN_Setup();
 
+    Setpoint = 2048;
+    Kp = 0.5;
+    Ki = 0.1;
+    Kd = 0.1;
 
     // Start the BIOS
     BIOS_start();

@@ -20,7 +20,7 @@ void CAN_ISR(void) {
     case RX0OBJECT: // message received
 
         // Set message data pointer
-        CAN_RX0_Message.pui8MsgData = RX0_Data;
+        CAN_RX0_Message.pui8MsgData = (uint8_t *) RX0_Data;
 
         // Get message data
         CANMessageGet(CAN0_BASE, RX0OBJECT, &CAN_RX0_Message, 1);
@@ -69,7 +69,7 @@ void CAN_Send(void) {
         if (CAN_Error_Flag == 0) {
 
             // Set message data pointer
-            CAN_TX0_Message.pui8MsgData = TX0_Data;
+            CAN_TX0_Message.pui8MsgData = (uint8_t *) TX0_Data;
 
             // Send the CAN message using object number 2
             CANMessageSet(CAN0_BASE, TX0OBJECT, &CAN_TX0_Message, MSG_OBJ_TYPE_TX);
@@ -192,9 +192,9 @@ void CAN_Setup(void) {
     // Set up TX0 message object
     CAN_TX0_Message.ui32MsgID = CANTX0ID;                // Set ID to 2
     CAN_TX0_Message.ui32MsgIDMask = 0;                   // Set mask to 0, doesn't matter for this
-    CAN_TX0_Message.ui32Flags = MSG_OBJ_TX_INT_ENABLE    // Set TX interrupt flag
+    CAN_TX0_Message.ui32Flags = MSG_OBJ_TX_INT_ENABLE;    // Set TX interrupt flag
     CAN_TX0_Message.ui32MsgLen = sizeof(TX0_Data);       // Set length to 1 byte
-    CAN_TX0_Message.pui8MsgData = TX0_Data;              // Set the message data pointer
+    CAN_TX0_Message.pui8MsgData = (uint8_t *) TX0_Data;              // Set the message data pointer
 
     // Set up RX0 message object
     CAN_RX0_Message.ui32MsgID = CANRX0ID;                // Set ID to Any
@@ -202,9 +202,9 @@ void CAN_Setup(void) {
     CAN_RX0_Message.ui32Flags = MSG_OBJ_RX_INT_ENABLE |  // Set RX Interrupt and use ID filter flags
                                  MSG_OBJ_USE_ID_FILTER;
     CAN_RX0_Message.ui32MsgLen = sizeof(RX0_Data);        // Set length to 1 byte
-    CAN_RX0_Message.pui8MsgData = RX0_Data;              // Set the message data pointer
+    CAN_RX0_Message.pui8MsgData = (uint8_t *) RX0_Data;              // Set the message data pointer
 
     // Load message 1 with g_sCAN0RxMessage settings
-    CANMessageSet(CAN0_BASE, RXOBJECT, &CAN_RX0_Message, MSG_OBJ_TYPE_RX);
+    CANMessageSet(CAN0_BASE, RX0OBJECT, &CAN_RX0_Message, MSG_OBJ_TYPE_RX);
 }
 

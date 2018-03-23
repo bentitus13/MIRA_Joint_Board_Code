@@ -28,35 +28,13 @@
 
 /*********** TI RTOS Header files **********/
 #include <inc/hw_gpio.h>
-#include <inc/hw_ints.h>
 #include <inc/hw_memmap.h>
-#include <inc/hw_types.h>
-#include <ti/drivers/GPIO.h>
 #include "driverlib/adc.h"
-#include "driverlib/gpio.h"
-#include "driverlib/interrupt.h"
-#include "driverlib/pin_map.h"
-#include "driverlib/pwm.h"
-#include "driverlib/ssi.h"
 #include "driverlib/sysctl.h"
 #include "driverlib/timer.h"
-#include "driverlib/uart.h"
-// #include <ti/drivers/I2C.h>
-// #include <ti/drivers/SDSPI.h>
-// #include <ti/drivers/SPI.h>
-// #include <ti/drivers/UART.h>
-// #include <ti/drivers/Watchdog.h>
-// #include <ti/drivers/WiFi.h>
 
 
 /************ Local Header files ***********/
-#include "include/Board.h"
-#include "include/MIRA_CAN.h"
-#include "include/MIRA_Current_Sensor.h"
-#include "include/MIRA_Encoder.h"
-#include "include/MIRA_GPIO.h"
-#include "include/MIRA_Load_Cell.h"
-#include "include/MIRA_Motor_Control.h"
 
 
 /***************** Defines *****************/
@@ -75,11 +53,17 @@ void Load_Cell_Calculate(void);
 // Helper Functions
 
 // Setup Functions
-void ADC_Setup(void);
+void Load_Cell_Setup(void);
 
 
 /************* Global Variables ************/
-volatile int Load_Cell_Value;
+uint32_t Load_Cell_Value;
+
+uint32_t Load_Cell_Values[8];
+
+uint32_t Load_Cell_Index;
+
+uint32_t Load_Cell_Force;
 
 
 #endif /* INCLUDE_MIRA_LOAD_CELL_H_ */

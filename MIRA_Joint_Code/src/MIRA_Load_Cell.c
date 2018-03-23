@@ -11,21 +11,31 @@
 
 /******************* HWIs ******************/
 void Load_Cell_ISR(void) {
-
+    ADCIntClear(ADC0_BASE, 1);
+    ADCSequenceDataGet(ADC0_BASE, 1, &Load_Cell_Value);
+    Load_Cell_Values[Load_Cell_Index] = Load_Cell_Value;
+    Load_Cell_Index = 0x07 & (Load_Cell_Value + 1);
 }
 
 
 /**************** Clock SWIs ***************/
 // Release the ADC Task, ADC_Calculate
-void ADC_Timer(void) {
-    Semaphore_post(ADC_Semaphore);
+void Load_Cell_Timer(void) {
+    Semaphore_post(Load_Cell_Semaphore);
 }
 
 
 /****************** Tasks *****************/
-void ADC_Calculate(void) {
+void Load_Cell_Calculate(void) {
+    int i;
+    uint32_t Temp_Value;
     while(1) {
-        Semaphore_pend(ADC_Semaphore, BIOS_WAIT_FOREVER);
+        Semaphore_pend(Load_Cell_Semaphore, BIOS_WAIT_FOREVER);
+        Temp_Value = 0;
+        for (i = 0; i < 8; i++) {
+            Temp_Value += Load_Cell_Values[i];
+        }
+        Load_Cell_Force = Temp_Value / 8;
     }
 }
 
@@ -33,7 +43,7 @@ void ADC_Calculate(void) {
 
 
 /************* Setup Functions *************/
-void ADC_Setup(void) {
+void Load_Cell_Setup(void) {
     // Enable Timer1
     SysCtlPeripheralEnable(SYSCTL_PERIPH_TIMER1);
     TimerDisable(TIMER1_BASE, TIMER_BOTH);
@@ -42,7 +52,7 @@ void ADC_Setup(void) {
     // Set to periodic
     TimerConfigure(TIMER1_BASE, TIMER_CFG_A_PERIODIC);
     // Set the prescaler to 1
-    TimerPrescaleSet(TIMER1_BASE, TIMER_A, 0);
+    TimerPrescaleSet(TIMER1_BASE, TIMER_A, 1);
     // Set load value
     TimerLoadSet(TIMER1_BASE, TIMER_A, 0x0FFFF);
     // Set time to trigger ADC
@@ -60,35 +70,8 @@ void ADC_Setup(void) {
     SysCtlPeripheralEnable(SYSCTL_PERIPH_ADC0);
 
 //    // Wait for the module to be ready
-//    while(!SysCtlPeripheralReady(SYSCTL_PERIPH_ADC0)) {
-//    }
-
-    // Set up Current Sensor
-    ADCSequenceDisable(ADC0_BASE, 0);
-//    // ADC_PC_SR_125k, ADC_PC_SR_250k, ADC_PC_SR_500k, ADC_PC_SR_1M
-//    ADC0_BASE + ADC_O_PC = (ADC_PC_SR_1M);
-
-    // ADC clock
-    // Source - internal PIOSC at 16MHz, clock rate full for now
-    // Divider - 1 for now, could change later
-    // Maybe use PLL if the frequency isn't high enough
-//    ADCClockConfigSet(ADC0_BASE, ADC_CLOCK_SRC_PIOSC | ADC_CLOCK_RATE_FULL, 2);
-
-    // Trigger when the processor tells it to (one shot)
-    ADCSequenceConfigure(ADC0_BASE, 0, ADC_TRIGGER_ALWAYS, 0);
-
-    // Take a sample and interrupt
-    ADCSequenceStepConfigure(ADC0_BASE, 0, 0, ADC_CTL_CH3 | ADC_CTL_IE | ADC_CTL_END);
-
-    // Oversample at 16x (could go higher maybe? lower?)
-    ADCHardwareOversampleConfigure(ADC0_BASE, 16);
-
-    // Enable sequence0
-    ADCSequenceEnable(ADC0_BASE, 0);
-
-    // Enable interrupts for sequence 0
-    ADCIntEnable(ADC0_BASE, 0);
-//    ADCIntRegister(ADC0_BASE, 0, &getADC);
+    while(!SysCtlPeripheralReady(SYSCTL_PERIPH_ADC0)) {
+    }
 
     // Set up Load Cell
     ADCSequenceDisable(ADC0_BASE, 1);
@@ -105,7 +88,7 @@ void ADC_Setup(void) {
     ADCSequenceConfigure(ADC0_BASE, 1, ADC_TRIGGER_ALWAYS, 0);
 
     // Take a sample and interrupt
-    ADCSequenceStepConfigure(ADC0_BASE, 1, 0, ADC_CTL_CH3 | ADC_CTL_IE | ADC_CTL_END);
+    ADCSequenceStepConfigure(ADC0_BASE, 1, 0, ADC_CTL_CH1 | ADC_CTL_IE | ADC_CTL_END);
 
     // Oversample at 16x (could go higher maybe? lower?)
     ADCHardwareOversampleConfigure(ADC0_BASE, 16);

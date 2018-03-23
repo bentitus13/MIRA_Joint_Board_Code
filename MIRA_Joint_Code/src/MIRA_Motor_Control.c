@@ -20,11 +20,9 @@ void Motor_Timer(void) {
 void Motor_Drive(void) {
     while(1) {
         Semaphore_pend(Motor_Semaphore, BIOS_WAIT_FOREVER);
-        g_iMotorCtrl = g_iInByte;
-        Motor_Out(g_iMotorCtrl);
-        g_iMotorCtrl++;
-        if (g_iMotorCtrl > 5120)
-            g_iMotorCtrl = -5120;
+        Motor_Out(Motor_Control);
+        // Motor Test Signal
+//        Motor_Control = (4096-1) & (Motor_Control + 1);
     }
 }
 

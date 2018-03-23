@@ -40,27 +40,15 @@
 #include "driverlib/sysctl.h"
 #include "driverlib/timer.h"
 #include "driverlib/uart.h"
-// #include <ti/drivers/I2C.h>
-// #include <ti/drivers/SDSPI.h>
-// #include <ti/drivers/SPI.h>
-// #include <ti/drivers/UART.h>
-// #include <ti/drivers/Watchdog.h>
-// #include <ti/drivers/WiFi.h>
 
 
 /************ Local Header files ***********/
-#include "include/Board.h"
-#include "include/MIRA_CAN.h"
-#include "include/MIRA_Current_Sensor.h"
-#include "include/MIRA_Encoder.h"
-#include "include/MIRA_GPIO.h"
-#include "include/MIRA_Load_Cell.h"
-#include "include/MIRA_Motor_Control.h"
 
 
 /***************** Defines *****************/
-#define READ_ANGLE        0x3FFF         // Data to send over SSI to read angle from AS5055
-#define ENCODER_WRAP(val) (0x0FFF & val) // Wrap encoder value to 0-4096
+#define READ_ANGLE        0x3FFF             // Data to send over SSI to read angle from AS5055
+#define ENCODER_WRAP(val) (0x0FFF & val)     // Wrap encoder value to 0-4096
+#define ENCODER_INDEX_WRAP(val) (0x07 & val) // Wrap encoder index to 0-8
 
 
 /*********** Function Prototypes ***********/
@@ -82,13 +70,23 @@ void SSI_Setup(void);
 
 /************* Global Variables ************/
 // Joint angle read in by encoder
-volatile int Encoder_Value;
+uint32_t Encoder_Value;
+
+// Last 8 joint angles read in by encoder
+uint32_t Encoder_Values[8];
+
+// Index for circular buffer
+uint32_t Encoder_Index;
 
 // Offset for tuning the encoder
 int Encoder_Offset;
 
 // Actual joint angle
 float Joint_Angle;
+
+float Past_Angles[32];
+
+uint32_t Past_Angle_Index;
 
 
 #endif /* INCLUDE_MIRA_ENCODER_H_ */

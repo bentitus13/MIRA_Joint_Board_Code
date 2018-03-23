@@ -2,10 +2,11 @@
  * MIRA_GPIO.c
  *
  *  Created on: Mar 17, 2018
+ *   Edited on: Mar 22, 2018
  *      Author: Ben Titus
  */
 
-#include "include/MIRA_GPIO"
+#include "include/MIRA_GPIO.h"
 
 
 /******************* HWIs ******************/
@@ -39,6 +40,7 @@ void Pin_Setup(void) {
     SysCtlPeripheralEnable(SYSCTL_PERIPH_GPIOB);
     GPIOPinConfigure(GPIO_PB6_M0PWM0);
     GPIOPinTypePWM(GPIO_PORTB_BASE, MOTOR_PWM_PIN);
+//    GPIOPadConfigSet(GPIO_PORTB_BASE, MOTOR_PWM_PIN, GPIO_STRENGTH_12MA, 0);
 
 
     // Initialize PB0, PB1, PB5 as GPIO output
@@ -66,4 +68,27 @@ void Pin_Setup(void) {
     // Initialize PE0 as ADC input
     SysCtlPeripheralEnable(SYSCTL_PERIPH_GPIOE);
     GPIOPinTypeADC(GPIO_PORTE_BASE, ISEN_PIN);
+
+
+    // Initialize PE2 as ADC input
+    SysCtlPeripheralEnable(SYSCTL_PERIPH_GPIOE);
+    GPIOPinTypeADC(GPIO_PORTE_BASE, LOAD_CELL_PIN);
+
+
+    // Initialize PA6 and PA7 as GPIO input
+    SysCtlPeripheralEnable(SYSCTL_PERIPH_GPIOA);
+    GPIOPinTypeGPIOInput(GPIO_PORTA_BASE, SW1_PIN | SW2_PIN);
+    GPIOPadConfigSet(GPIO_PORTA_BASE, SW1_PIN | SW2_PIN, GPIO_STRENGTH_2MA, GPIO_PIN_TYPE_STD_WPD);
+
+
+    // Initialize PB4 as GPIO input
+    SysCtlPeripheralEnable(SYSCTL_PERIPH_GPIOB);
+    GPIOPinTypeGPIOInput(GPIO_PORTB_BASE, SW4_PIN);
+    GPIOPadConfigSet(GPIO_PORTB_BASE, SW4_PIN, GPIO_STRENGTH_2MA, GPIO_PIN_TYPE_STD_WPD);
+
+
+    // Initialize PD1, PD2, and PD3 as GPIO input
+    SysCtlPeripheralEnable(SYSCTL_PERIPH_GPIOD);
+    GPIOPinTypeGPIOInput(GPIO_PORTD_BASE, SW3_PIN | SW5_PIN | SW6_PIN);
+    GPIOPadConfigSet(GPIO_PORTD_BASE, SW3_PIN | SW5_PIN | SW6_PIN, GPIO_STRENGTH_2MA, GPIO_PIN_TYPE_STD_WPD);
 }
