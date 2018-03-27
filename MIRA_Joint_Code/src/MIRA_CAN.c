@@ -2,7 +2,7 @@
  * MIRA_CAN.c
  *
  *  Created on: Mar 13, 2018
- *      Edited: Mar 17, 2018
+ *      Edited: Mar 26, 2018
  *      Author: Ben Titus
  */
 
@@ -17,27 +17,30 @@ void CAN_ISR(void) {
     Status = CANIntStatus(CAN0_BASE, CAN_INT_STS_CAUSE);
 
     switch(Status) {
-    case RX0OBJECT: // message received
+    case RX_ALL: // message received
 
         // Set message data pointer
-        CAN_RX0_Message.pui8MsgData = (uint8_t *) RX0_Data;
+        CAN_RX_All.pui8MsgData = (uint8_t *) RX_All_Data;
 
         // Get message data
-        CANMessageGet(CAN0_BASE, RX0OBJECT, &CAN_RX0_Message, 1);
+        CANMessageGet(CAN0_BASE, RX_ALL, &CAN_RX_All, 1);
 
         // Increment received message count
         RX0_Mesage_Count++;
 
         // Since a message was transmitted, clear any error flags.
         CAN_Error_Flag = 0;
+
+        // Set flag that message was reeived
+//        RX0_Flag = 1;
         break;
 
-    case TX0OBJECT:
+    case TX_ALL:
         // Set message type to RX so that it doesn't continually transmit messages
-        CANMessageSet(CAN0_BASE, TX0OBJECT, &CAN_TX0_Message, MSG_OBJ_TYPE_RX);
+        CANMessageSet(CAN0_BASE, TX_ALL, &CAN_TX_All, MSG_OBJ_TYPE_RX_REMOTE);
 
         // Clear the message object interrupt.
-        CANIntClear(CAN0_BASE, TX0OBJECT);
+        CANIntClear(CAN0_BASE, TX_ALL);
 
         // Increment a counter to keep track of how many messages have been transmitted.
         TX0_Message_Count++;
@@ -69,10 +72,10 @@ void CAN_Send(void) {
         if (CAN_Error_Flag == 0) {
 
             // Set message data pointer
-            CAN_TX0_Message.pui8MsgData = (uint8_t *) TX0_Data;
+            CAN_TX_All.pui8MsgData = (uint8_t *) TX_All_Data;
 
             // Send the CAN message using object number 2
-            CANMessageSet(CAN0_BASE, TX0OBJECT, &CAN_TX0_Message, MSG_OBJ_TYPE_TX);
+            CANMessageSet(CAN0_BASE, TX_ALL_ID, &CAN_TX_All, MSG_OBJ_TYPE_TX);
         }
     }
 }
@@ -168,6 +171,118 @@ void CAN_Error_Handler(void) {
     }
 }
 
+// Reads in the joint board ID
+void CAN_Read_ID(void) {
+    Joint_Board_ID = 0;
+    if (GPIOPinRead(SW1_PORT, SW1_PIN)) {
+        Joint_Board_ID |= 0x01;
+    }
+    if (GPIOPinRead(SW2_PORT, SW2_PIN)) {
+        Joint_Board_ID |= 0x02;
+    }
+    if (GPIOPinRead(SW3_PORT, SW3_PIN)) {
+        Joint_Board_ID |= 0x04;
+    }
+    if (GPIOPinRead(SW4_PORT, SW4_PIN)) {
+        Joint_Board_ID |= 0x08;
+    }
+    if (GPIOPinRead(SW5_PORT, SW5_PIN)) {
+        Joint_Board_ID |= 0x10;
+    }
+    if (GPIOPinRead(SW6_PORT, SW6_PIN)) {
+        Joint_Board_ID |= 0x20;
+    }
+    Message_ID = (Joint_Board_ID << 5) & 0x7E0;
+}
+
+// Set up the TX_All message object
+void Setup_TX_All(void) {
+    CAN_TX_All.ui32MsgID = TX_ALL_ID;                      // Set ID to Base module address
+    CAN_TX_All.ui32MsgIDMask = 0;                         // Set mask to 0, doesn't matter for this
+    CAN_TX_All.ui32Flags = MSG_OBJ_TX_INT_ENABLE;         // Set TX interrupt flag
+    CAN_TX_All.ui32MsgLen = sizeof(TX_All_Data);             // Set length to 1 byte
+    CAN_TX_All.pui8MsgData = (uint8_t *) TX_All_Data;        // Set the message data pointer
+}
+
+void Setup_TX_Joint_Angle(void) {
+    CAN_TX_Joint_Angle.ui32MsgID = TX_JOINT_ANGLE_ID;                      // Set ID to Base module address
+    CAN_TX_Joint_Angle.ui32MsgIDMask = 0;                         // Set mask to 0, doesn't matter for this
+    CAN_TX_Joint_Angle.ui32Flags = MSG_OBJ_TX_INT_ENABLE;         // Set TX interrupt flag
+    CAN_TX_Joint_Angle.ui32MsgLen = sizeof(TX_Joint_Angle_Data);             // Set length to 1 byte
+    CAN_TX_Joint_Angle.pui8MsgData = (uint8_t *) TX_Joint_Angle_Data;        // Set the message data pointer
+}
+
+void Setup_TX_Motor_Torque(void) {
+    CAN_TX_Motor_Torque.ui32MsgID = TX_MOTOR_TORQUE_ID;                           // Set ID to Base module address
+    CAN_TX_Motor_Torque.ui32MsgIDMask = 0;                              // Set mask to 0, doesn't matter for this
+    CAN_TX_Motor_Torque.ui32Flags = MSG_OBJ_TX_INT_ENABLE;              // Set TX interrupt flag
+    CAN_TX_Motor_Torque.ui32MsgLen = sizeof(TX_Motor_Torque_Data);      // Set length to 1 byte
+    CAN_TX_Motor_Torque.pui8MsgData = (uint8_t *) TX_Motor_Torque_Data; // Set the message data pointer
+}
+
+void Setup_RX_All(void) {
+    CAN_RX_All.ui32MsgID = Message_ID | RX_ALL_ID;                      // Set ID to Base module address
+    CAN_RX_All.ui32MsgIDMask = 0;                         // Set mask to 0, doesn't matter for this
+    CAN_RX_All.ui32Flags = MSG_OBJ_RX_INT_ENABLE;         // Set TX interrupt flag
+    CAN_RX_All.ui32MsgLen = sizeof(RX_All_Data);             // Set length to 1 byte
+    CAN_RX_All.pui8MsgData = (uint8_t *) RX_All_Data;        // Set the message data pointer
+    CANMessageSet(CAN0_BASE, RX_ALL, &CAN_RX_All, MSG_OBJ_TYPE_RX);
+}
+
+void Setup_RX_Joint_Angle(void) {
+    CAN_RX_Joint_Angle.ui32MsgID = Message_ID | RX_JOINT_ANGLE_ID;                      // Set ID to Base module address
+    CAN_RX_Joint_Angle.ui32MsgIDMask = 0;                         // Set mask to 0, doesn't matter for this
+    CAN_RX_Joint_Angle.ui32Flags = MSG_OBJ_RX_INT_ENABLE;         // Set TX interrupt flag
+    CAN_RX_Joint_Angle.ui32MsgLen = sizeof(RX_Joint_Angle_Data);             // Set length to 1 byte
+    CAN_RX_Joint_Angle.pui8MsgData = (uint8_t *) RX_Joint_Angle_Data;        // Set the message data pointer
+    CANMessageSet(CAN0_BASE, RX_JOINT_ANGLE, &CAN_RX_Joint_Angle, MSG_OBJ_TYPE_RX);
+}
+
+void Setup_RX_Motor_Torque(void) {
+    CAN_RX_Motor_Torque.ui32MsgID = Message_ID | RX_MOTOR_TORQUE_ID;                      // Set ID to Base module address
+    CAN_RX_Motor_Torque.ui32MsgIDMask = 0;                         // Set mask to 0, doesn't matter for this
+    CAN_RX_Motor_Torque.ui32Flags = MSG_OBJ_RX_INT_ENABLE;         // Set TX interrupt flag
+    CAN_RX_Motor_Torque.ui32MsgLen = sizeof(RX_Motor_Torque_Data);             // Set length to 1 byte
+    CAN_RX_Motor_Torque.pui8MsgData = (uint8_t *) RX_Motor_Torque_Data;        // Set the message data pointer
+    CANMessageSet(CAN0_BASE, RX_MOTOR_TORQUE, &CAN_RX_Motor_Torque, MSG_OBJ_TYPE_RX);
+}
+
+void Setup_RX_Init_PIDP(void) {
+    CAN_RX_Init_PIDP.ui32MsgID = Message_ID | RX_INIT_PIDP_ID;                      // Set ID to Base module address
+    CAN_RX_Init_PIDP.ui32MsgIDMask = 0;                         // Set mask to 0, doesn't matter for this
+    CAN_RX_Init_PIDP.ui32Flags = MSG_OBJ_RX_INT_ENABLE;         // Set TX interrupt flag
+    CAN_RX_Init_PIDP.ui32MsgLen = sizeof(RX_Init_PIDP_Data);             // Set length to 1 byte
+    CAN_RX_Init_PIDP.pui8MsgData = (uint8_t *) &RX_Init_PIDP_Data;        // Set the message data pointer
+    CANMessageSet(CAN0_BASE, RX_INIT_PIDP, &CAN_RX_Init_PIDP, MSG_OBJ_TYPE_RX);
+}
+
+void Setup_RX_Init_PIDI(void) {
+    CAN_RX_Init_PIDI.ui32MsgID = Message_ID | RX_INIT_PIDI_ID;                      // Set ID to Base module address
+    CAN_RX_Init_PIDI.ui32MsgIDMask = 0;                         // Set mask to 0, doesn't matter for this
+    CAN_RX_Init_PIDI.ui32Flags = MSG_OBJ_RX_INT_ENABLE;         // Set TX interrupt flag
+    CAN_RX_Init_PIDI.ui32MsgLen = sizeof(RX_Init_PIDI_Data);             // Set length to 1 byte
+    CAN_RX_Init_PIDI.pui8MsgData = (uint8_t *) &RX_Init_PIDI_Data;        // Set the message data pointer
+    CANMessageSet(CAN0_BASE, RX_INIT_PIDI, &CAN_RX_Init_PIDI, MSG_OBJ_TYPE_RX);
+}
+
+void Setup_RX_Init_PIDD(void) {
+    CAN_RX_Init_PIDD.ui32MsgID = Message_ID | RX_INIT_PIDD_ID;                      // Set ID to Base module address
+    CAN_RX_Init_PIDD.ui32MsgIDMask = 0;                         // Set mask to 0, doesn't matter for this
+    CAN_RX_Init_PIDD.ui32Flags = MSG_OBJ_RX_INT_ENABLE;         // Set TX interrupt flag
+    CAN_RX_Init_PIDD.ui32MsgLen = sizeof(RX_Init_PIDD_Data);             // Set length to 1 byte
+    CAN_RX_Init_PIDD.pui8MsgData = (uint8_t *) &RX_Init_PIDD_Data;        // Set the message data pointer
+    CANMessageSet(CAN0_BASE, RX_INIT_PIDD, &CAN_RX_Init_PIDD, MSG_OBJ_TYPE_RX);
+}
+
+void Setup_RX_Init_Encoder(void) {
+    CAN_RX_Init_Encoder.ui32MsgID = Message_ID | RX_INIT_ENCODER_ID;                      // Set ID to Base module address
+    CAN_RX_Init_Encoder.ui32MsgIDMask = 0;                         // Set mask to 0, doesn't matter for this
+    CAN_RX_Init_Encoder.ui32Flags = MSG_OBJ_RX_INT_ENABLE;         // Set TX interrupt flag
+    CAN_RX_Init_Encoder.ui32MsgLen = sizeof(RX_Init_Encoder_Data);             // Set length to 1 byte
+    CAN_RX_Init_Encoder.pui8MsgData = (uint8_t *) RX_Init_Encoder_Data;        // Set the message data pointer
+    CANMessageSet(CAN0_BASE, RX_INIT_ENCODER, &CAN_RX_Init_Encoder, MSG_OBJ_TYPE_RX);
+}
+
 
 /************* Setup Functions *************/
 void CAN_Setup(void) {
@@ -189,22 +304,17 @@ void CAN_Setup(void) {
     // Enable CAN0
     CANEnable(CAN0_BASE);
 
-    // Set up TX0 message object
-    CAN_TX0_Message.ui32MsgID = CANTX0ID;                // Set ID to 2
-    CAN_TX0_Message.ui32MsgIDMask = 0;                   // Set mask to 0, doesn't matter for this
-    CAN_TX0_Message.ui32Flags = MSG_OBJ_TX_INT_ENABLE;    // Set TX interrupt flag
-    CAN_TX0_Message.ui32MsgLen = sizeof(TX0_Data);       // Set length to 1 byte
-    CAN_TX0_Message.pui8MsgData = (uint8_t *) TX0_Data;              // Set the message data pointer
+    CAN_Read_ID();
 
-    // Set up RX0 message object
-    CAN_RX0_Message.ui32MsgID = CANRX0ID;                // Set ID to Any
-    CAN_RX0_Message.ui32MsgIDMask = 0;                   // Set mask to any
-    CAN_RX0_Message.ui32Flags = MSG_OBJ_RX_INT_ENABLE |  // Set RX Interrupt and use ID filter flags
-                                 MSG_OBJ_USE_ID_FILTER;
-    CAN_RX0_Message.ui32MsgLen = sizeof(RX0_Data);        // Set length to 1 byte
-    CAN_RX0_Message.pui8MsgData = (uint8_t *) RX0_Data;              // Set the message data pointer
-
-    // Load message 1 with g_sCAN0RxMessage settings
-    CANMessageSet(CAN0_BASE, RX0OBJECT, &CAN_RX0_Message, MSG_OBJ_TYPE_RX);
+    Setup_TX_All();
+    Setup_TX_Joint_Angle();
+    Setup_TX_Motor_Torque();
+    Setup_RX_All();
+    Setup_RX_Joint_Angle();
+    Setup_RX_Motor_Torque();
+    Setup_RX_Init_PIDP();
+    Setup_RX_Init_PIDI();
+    Setup_RX_Init_PIDD();
+    Setup_RX_Init_Encoder();
 }
 

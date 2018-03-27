@@ -2,7 +2,7 @@
  * MIRA_GPIO.c
  *
  *  Created on: Mar 17, 2018
- *   Edited on: Mar 22, 2018
+ *   Edited on: Mar 26, 2018
  *      Author: Ben Titus
  */
 
@@ -23,72 +23,75 @@
 
 /************* Setup Functions *************/
 void Pin_Setup(void) {
-    // Set GPIO A0 and A1 as UART pins.
     SysCtlPeripheralEnable(SYSCTL_PERIPH_GPIOA);
-    GPIOPinConfigure(GPIO_PA0_U0RX);
-    GPIOPinConfigure(GPIO_PA1_U0TX);
-    GPIOPinTypeUART(GPIO_PORTA_BASE, GPIO_PIN_0 | GPIO_PIN_1);
+    SysCtlPeripheralEnable(SYSCTL_PERIPH_GPIOB);
+    SysCtlPeripheralEnable(SYSCTL_PERIPH_GPIOC);
+    SysCtlPeripheralEnable(SYSCTL_PERIPH_GPIOD);
+    SysCtlPeripheralEnable(SYSCTL_PERIPH_GPIOE);
+    SysCtlPeripheralEnable(SYSCTL_PERIPH_GPIOF);
 
 
     // Pf2 is Heartbeat LED (Blue)
-    SysCtlPeripheralEnable(SYSCTL_PERIPH_GPIOF);
-    GPIOPinTypeGPIOOutput(GPIO_PORTF_BASE, HEARTBEAT_PIN);
+    GPIOPinTypeGPIOOutput(HEARTBEAT_PORT, HEARTBEAT_PIN);
 
 
-    // Initialize PB6 as PWM output
-    // PB6 is motor PWM
-    SysCtlPeripheralEnable(SYSCTL_PERIPH_GPIOB);
-    GPIOPinConfigure(GPIO_PB6_M0PWM0);
-    GPIOPinTypePWM(GPIO_PORTB_BASE, MOTOR_PWM_PIN);
-//    GPIOPadConfigSet(GPIO_PORTB_BASE, MOTOR_PWM_PIN, GPIO_STRENGTH_12MA, 0);
+    // Initialize motor PWM output
+    GPIOPinConfigure(MOTOR_PWM_CONFIG);
+    GPIOPinTypePWM(MOTOR_PWM_PORT, MOTOR_PWM_PIN);
 
 
-    // Initialize PB0, PB1, PB5 as GPIO output
-    // PB5 is motor direction
-    SysCtlPeripheralEnable(SYSCTL_PERIPH_GPIOB);
-    GPIOPinTypeGPIOOutput(GPIO_PORTB_BASE, GPIO_PIN_0 | GPIO_PIN_1 | MOTOR_DIR_PIN);
+    // Initialize motor direction
+    GPIOPinTypeGPIOOutput(MOTOR_DIR_PORT, MOTOR_DIR_PIN);
 
 
     // Initialize SSI
-    SysCtlPeripheralEnable(SYSCTL_PERIPH_GPIOA);
-    GPIOPinConfigure(GPIO_PA2_SSI0CLK);          // PA2 -> SCLK
-    GPIOPinConfigure(GPIO_PA3_SSI0FSS);          // PA3 -> CS
-    GPIOPinConfigure(GPIO_PA4_SSI0RX);           // PA4 -> MISO
-    GPIOPinConfigure(GPIO_PA5_SSI0TX);           // PA5 -> MOSI
-    GPIOPinTypeSSI(GPIO_PORTA_BASE, SCLK_PIN | CS_PIN | MISO_PIN | MOSI_PIN);
+    GPIOPinConfigure(SCLK_CONFIG);      // PA2 -> SCLK
+    GPIOPinConfigure(CS_CONFIG);        // PA3 -> CS
+    GPIOPinConfigure(MISO_CONFIG);      // PA4 -> MISO
+    GPIOPinConfigure(MOSI_CONFIG);      // PA5 -> MOSI
+    GPIOPinTypeSSI(SPI_PORT, SCLK_PIN | CS_PIN | MISO_PIN | MOSI_PIN);
 
 
-    // Initialize PE4 and PE5 as CAN0Rx and CAN0Tx respectively
-    SysCtlPeripheralEnable(SYSCTL_PERIPH_GPIOE);
-    GPIOPinConfigure(GPIO_PE4_CAN0RX);
-    GPIOPinConfigure(GPIO_PE5_CAN0TX);
-    GPIOPinTypeCAN(GPIO_PORTE_BASE, GPIO_PIN_4 | GPIO_PIN_5);
+    // Initialize CAN0RX and CAN0TX
+    GPIOPinConfigure(CANRX_CONFIG);
+    GPIOPinConfigure(CANTX_CONFIG);
+    GPIOPinTypeCAN(CAN_PORT, GPIO_PIN_4 | GPIO_PIN_5);
 
 
-    // Initialize PE0 as ADC input
-    SysCtlPeripheralEnable(SYSCTL_PERIPH_GPIOE);
-    GPIOPinTypeADC(GPIO_PORTE_BASE, ISEN_PIN);
+    // Initialize current sensor input
+    GPIOPinTypeADC(ISEN_PORT, ISEN_PIN);
 
 
-    // Initialize PE2 as ADC input
-    SysCtlPeripheralEnable(SYSCTL_PERIPH_GPIOE);
-    GPIOPinTypeADC(GPIO_PORTE_BASE, LOAD_CELL_PIN);
+    // Initialize load cell input
+    GPIOPinTypeADC(LOAD_CELL_PORT, LOAD_CELL_PIN);
 
 
-    // Initialize PA6 and PA7 as GPIO input
-    SysCtlPeripheralEnable(SYSCTL_PERIPH_GPIOA);
-    GPIOPinTypeGPIOInput(GPIO_PORTA_BASE, SW1_PIN | SW2_PIN);
-    GPIOPadConfigSet(GPIO_PORTA_BASE, SW1_PIN | SW2_PIN, GPIO_STRENGTH_2MA, GPIO_PIN_TYPE_STD_WPD);
+    // Initialize SW1 as GPIO input
+    GPIOPinTypeGPIOInput(SW1_PORT, SW1_PIN);
+    GPIOPadConfigSet(SW1_PORT, SW1_PIN, GPIO_STRENGTH_2MA, GPIO_PIN_TYPE_STD_WPD);
 
 
-    // Initialize PB4 as GPIO input
-    SysCtlPeripheralEnable(SYSCTL_PERIPH_GPIOB);
-    GPIOPinTypeGPIOInput(GPIO_PORTB_BASE, SW4_PIN);
-    GPIOPadConfigSet(GPIO_PORTB_BASE, SW4_PIN, GPIO_STRENGTH_2MA, GPIO_PIN_TYPE_STD_WPD);
+    // Initialize SW2 as GPIO input
+    GPIOPinTypeGPIOInput(SW2_PORT, SW2_PIN);
+    GPIOPadConfigSet(SW2_PORT, SW2_PIN, GPIO_STRENGTH_2MA, GPIO_PIN_TYPE_STD_WPD);
 
 
-    // Initialize PD1, PD2, and PD3 as GPIO input
-    SysCtlPeripheralEnable(SYSCTL_PERIPH_GPIOD);
-    GPIOPinTypeGPIOInput(GPIO_PORTD_BASE, SW3_PIN | SW5_PIN | SW6_PIN);
-    GPIOPadConfigSet(GPIO_PORTD_BASE, SW3_PIN | SW5_PIN | SW6_PIN, GPIO_STRENGTH_2MA, GPIO_PIN_TYPE_STD_WPD);
+    // Initialize SW3 as GPIO input
+    GPIOPinTypeGPIOInput(SW3_PORT, SW3_PIN);
+    GPIOPadConfigSet(SW3_PORT, SW3_PIN, GPIO_STRENGTH_2MA, GPIO_PIN_TYPE_STD_WPD);
+
+
+    // Initialize SW4 as GPIO input
+    GPIOPinTypeGPIOInput(SW4_PORT, SW4_PIN);
+    GPIOPadConfigSet(SW4_PORT, SW4_PIN, GPIO_STRENGTH_2MA, GPIO_PIN_TYPE_STD_WPD);
+
+
+    // Initialize SW5 as GPIO input
+    GPIOPinTypeGPIOInput(SW5_PORT, SW5_PIN);
+    GPIOPadConfigSet(SW5_PORT, SW5_PIN, GPIO_STRENGTH_2MA, GPIO_PIN_TYPE_STD_WPD);
+
+
+    // Initialize SW6 as GPIO input
+    GPIOPinTypeGPIOInput(SW6_PORT, SW6_PIN);
+    GPIOPadConfigSet(SW6_PORT, SW6_PIN, GPIO_STRENGTH_2MA, GPIO_PIN_TYPE_STD_WPD);
 }
