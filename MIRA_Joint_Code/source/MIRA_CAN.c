@@ -82,7 +82,6 @@ void CAN_Send(void) {
 
 
 /************* Helper Functions ************/
-
 // Error handler for CAN errors
 // Fill in with what to do
 void CAN_Error_Handler(void) {

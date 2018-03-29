@@ -47,33 +47,37 @@
 
 
 /***************** Defines *****************/
-// Receive message IDs (just lower 5 bits)
-#define RX_ALL_ID           0x01
-#define RX_JOINT_ANGLE_ID   0x02
-#define RX_MOTOR_TORQUE_ID  0x03
-#define RX_INIT_PIDP_ID     0x04
-#define RX_INIT_PIDI_ID     0x05
-#define RX_INIT_PIDD_ID     0x06
-#define RX_INIT_ENCODER_ID  0x07
+// Receive message IDs (just lower 5 bits)IDs
+#define RX_JOINT1_ID        0x001
+#define RX_JOINT2_ID        0x002
+#define RX_JOINT3_ID        0x003
+#define RX_JOINT4_ID        0x004
+#define RX_JOINT5_ID        0x005
+#define RX_JOINT6_ID        0x006
 
 // Transmit message IDs
-#define TX_ALL_ID           0x020
-#define TX_JOINT_ANGLE_ID   0x021
-#define TX_MOTOR_TORQUE_ID  0x022
+#define TX_JOINT1_ID        0x021
+#define TX_JOINT2_ID        0x022
+#define TX_JOINT3_ID        0x023
+#define TX_JOINT4_ID        0x024
+#define TX_JOINT5_ID        0x025
+#define TX_JOINT6_ID        0x026
 
 // Receive message object numbers
-#define RX_ALL              1
-#define RX_JOINT_ANGLE      2
-#define RX_MOTOR_TORQUE     3
-#define RX_INIT_PIDP        4
-#define RX_INIT_PIDI        5
-#define RX_INIT_PIDD        6
-#define RX_INIT_ENCODER     7
+#define RX_JOINT1           1
+#define RX_JOINT2           2
+#define RX_JOINT3           3
+#define RX_JOINT4           4
+#define RX_JOINT5           5
+#define RX_JOINT6           6
 
 // Transmit message object numbers
-#define TX_ALL              20
-#define TX_JOINT_ANGLE      21
-#define TX_MOTOR_TORQUE     22
+#define TX_JOINT1           21
+#define TX_JOINT2           22
+#define TX_JOINT3           23
+#define TX_JOINT4           24
+#define TX_JOINT5           25
+#define TX_JOINT6           26
 
 
 /*********** Function Prototypes ***********/
@@ -87,14 +91,30 @@ void CAN_Timer(void);
 void CAN_Send(void);
 
 // Helper Functions
-
+void CAN_Error_Handler(void);
+void Setup_TX_Joint1(void);
+void Setup_TX_Joint2(void);
+void Setup_TX_Joint3(void);
+void Setup_TX_Joint4(void);
+void Setup_TX_Joint5(void);
+void Setup_TX_Joint6(void);
+void Setup_RX_Joint1(void);
+void Setup_RX_Joint2(void);
+void Setup_RX_Joint3(void);
+void Setup_RX_Joint4(void);
+void Setup_RX_Joint5(void);
+void Setup_RX_Joint6(void);
 
 // Setup Functions
 void CAN_Setup(void);
 
 
 /**************** Structs ******************/
-typedef struct Joint {
+typedef struct Joint_Struct {
+    // CAN Object numbers
+    uint32_t TX_Object_Number;
+    uint32_t RX_Object_Number;
+
     // Joint board ID, raw number (0-63)
     uint16_t Joint_Board_ID;
 
@@ -102,31 +122,19 @@ typedef struct Joint {
     uint16_t Message_ID;
 
     // Data variables
-    uint16_t TX_All_Data[2];
-    uint16_t TX_Joint_Angle_Data;
-    uint16_t TX_Motor_Torque_Data;
-    uint16_t RX_All_Data[2];
-    uint16_t RX_Joint_Angle_Data;
-    uint16_t RX_Motor_Torque_Data;
-    float RX_Init_PIDP_Data;
-    float RX_Init_PIDI_Data;
-    float RX_Init_PIDD_Data;
-    uint16_t RX_Init_Encoder_Data;
+    uint16_t TX_Data[2];
+    uint16_t RX_Data[2];
+    float TX_Init_PIDP_Data;
+    float TX_Init_PIDI_Data;
+    float TX_Init_PIDD_Data;
+    uint16_t TX_Init_Encoder_Data;
 
     // CAN transmit message objects
-    tCANMsgObject CAN_TX_All;
-    tCANMsgObject CAN_TX_Update;
-    tCANMsgObject CAN_TX_Motor_Torque;
+    tCANMsgObject CAN_TX_Joint;
 
     // CAN receive message objects
-    tCANMsgObject CAN_RX_All;
-    tCANMsgObject CAN_RX_Joint_Angle;
-    tCANMsgObject CAN_RX_Motor_Torque;
-    tCANMsgObject CAN_RX_Init_PIDP;
-    tCANMsgObject CAN_RX_Init_PIDI;
-    tCANMsgObject CAN_RX_Init_PIDD;
-    tCANMsgObject CAN_RX_Init_Encoder;
-};
+    tCANMsgObject CAN_RX_Joint;
+} Joint;
 
 
 /************* Global Variables ************/
