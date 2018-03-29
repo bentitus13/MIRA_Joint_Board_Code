@@ -2,6 +2,7 @@
  * MIRA_UART.h
  *
  *  Created on: Mar 17, 2018
+ *   Edited on: Mar 27, 2018
  *      Author: Ben Titus
  */
 
@@ -39,22 +40,10 @@
 #include "driverlib/sysctl.h"
 #include "driverlib/timer.h"
 #include "driverlib/uart.h"
-// #include <ti/drivers/I2C.h>
-// #include <ti/drivers/SDSPI.h>
-// #include <ti/drivers/SPI.h>
-// #include <ti/drivers/UART.h>
-// #include <ti/drivers/Watchdog.h>
-// #include <ti/drivers/WiFi.h>
 
 
 /************ Local Header files ***********/
-#include "include/Board.h"
-#include "include/MIRA_CAN.h"
-#include "include/MIRA_Current_Sensor.h"
-#include "include/MIRA_Encoder.h"
 #include "include/MIRA_GPIO.h"
-#include "include/MIRA_Load_Cell.h"
-#include "include/MIRA_Motor_Control.h"
 
 
 /***************** Defines *****************/
@@ -65,8 +54,10 @@
 void UART_ISR(void);
 
 // SWIs
+void UART_Timer(void);
 
 // Tasks
+void UART_Transmit(void);
 
 // Helper Functions
 void UART_Print(char* str, uint8_t len);
@@ -81,12 +72,12 @@ volatile int g_iInByte;
 
 
 // Strings for printing
-char* g_pcStartupMsg = "Initialized!\n\r";
-uint8_t g_ui8StartupMsgLen = 15;
-char* g_pcReceivedMsg = "Message received!\n\r";
-uint8_t g_ui8ReceivedMsgLen = 20;
-char* g_pcReceivedMsgError = "Error receiving message\n\r";
-uint8_t g_ui8ReceivedMsgErrorLen = 26;
+static char* g_pcStartupMsg = "Initialized!\n\r";
+static uint8_t g_ui8StartupMsgLen = 15;
+static char* g_pcReceivedMsg = "Message received!\n\r";
+static uint8_t g_ui8ReceivedMsgLen = 20;
+static char* g_pcReceivedMsgError = "Error receiving message\n\r";
+static uint8_t g_ui8ReceivedMsgErrorLen = 26;
 
 
 

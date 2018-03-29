@@ -48,13 +48,7 @@
 
 
 /************ Local Header files ***********/
-#include "include/Board.h"
-#include "include/MIRA_CAN.h"
-#include "include/MIRA_Current_Sensor.h"
-#include "include/MIRA_Encoder.h"
 #include "include/MIRA_GPIO.h"
-#include "include/MIRA_Load_Cell.h"
-#include "include/MIRA_Motor_Control.h"
 
 
 /***************** Defines *****************/

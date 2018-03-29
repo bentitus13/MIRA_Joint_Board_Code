@@ -44,9 +44,17 @@ void UART_ISR(void) {
 
 
 /**************** Clock SWIs ***************/
+void UART_Timer(void) {
+    Semaphore_post(UART_Semaphore);
+}
 
 
 /****************** Tasks *****************/
+void UART_Transmit(void) {
+    while(1) {
+        Semaphore_pend(UART_Semaphore, BIOS_WAIT_FOREVER);
+    }
+}
 
 
 /************* Helper Functions ************/

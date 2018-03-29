@@ -37,16 +37,9 @@
 #include "driverlib/sysctl.h"
 #include "driverlib/timer.h"
 #include "driverlib/uart.h"
-// #include <ti/drivers/I2C.h>
-// #include <ti/drivers/SDSPI.h>
-// #include <ti/drivers/SPI.h>
-// #include <ti/drivers/UART.h>
-// #include <ti/drivers/Watchdog.h>
-// #include <ti/drivers/WiFi.h>
 
 
 /************ Local Header files ***********/
-#include "include/Board.h"
 #include "include/MIRA_CAN.h"
 #include "include/MIRA_GPIO.h"
 //#include "include/MIRA_HID.h"
@@ -64,6 +57,7 @@
 void Heartbeat(void);
 
 // Tasks
+void Init_Stuff(void);
 
 // Helper Functions
 
@@ -91,13 +85,15 @@ void Heartbeat(void) {
 
 
 /****************** Tasks *****************/
-// Task that can initialize runtime events
-// This should run once then block forever
+void Idle_Function(void) {
+    while(1) {
+
+    }
+}
+
 void Init_Stuff(void) {
     while(1) {
         Semaphore_pend(Init_Semaphore, BIOS_WAIT_FOREVER);
-        // Enable interrupts
-        IntMasterEnable();
     }
 }
 
@@ -115,9 +111,7 @@ int main(void) {
 
     // Call all setup functions
     Pin_Setup();
-    Motor_Setup();
-    ADC_Setup();
-    SSI_Setup();
+    CAN_Setup();
     UART_Setup();
 
 
