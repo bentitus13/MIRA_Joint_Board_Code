@@ -142,7 +142,7 @@ typedef struct Joint_Struct {
 enum Joint_Number{JOINT1, JOINT2, JOINT3, JOINT4, JOINT5, JOINT6};
 
 // Joints
-Joint Joints[6];
+volatile Joint Joints[6];
 
 // Message count variables
 static volatile uint32_t TX0_Message_Count = 0;

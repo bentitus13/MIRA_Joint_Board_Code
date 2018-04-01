@@ -43,6 +43,7 @@
 
 
 /************ Local Header files ***********/
+#include "include/MIRA_CAN.h"
 #include "include/MIRA_GPIO.h"
 
 
@@ -57,7 +58,9 @@ void UART_ISR(void);
 void UART_Timer(void);
 
 // Tasks
+void UART_Init(void);
 void UART_Transmit(void);
+void UART_Update_Position(void);
 
 // Helper Functions
 void UART_Print(char* str, uint8_t len);
@@ -68,7 +71,18 @@ void UART_Setup(void);
 
 
 /************* Global Variables ************/
-volatile int g_iInByte;
+static uint32_t UART_State = 0;
+
+uint8_t Init_Data[20];
+volatile uint8_t Global_Init_Data[20];
+uint32_t Init_Data_Index;
+
+uint8_t Update_Data[4];
+volatile uint8_t Global_Update_Data[4];
+uint32_t Update_Data_Index;
+
+uint32_t Init_Joint_Number; // Joint index for initialization
+uint32_t Joint_Index;       // Joint index for updates
 
 
 // Strings for printing

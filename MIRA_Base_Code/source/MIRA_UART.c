@@ -10,49 +10,115 @@
 
 /******************* HWIs ******************/
 void UART_ISR(void) {
-    int i = 4;
-    g_iInByte = 0;
     while (UARTCharsAvail(UART0_BASE)) {
-        switch (i) {
-        case 4:
-            g_iInByte += (UARTCharGetNonBlocking(UART0_BASE) - 0x30) * 1000;
+        switch(UART_State) {
+        // Initialization
+        case 0:
+            Global_Init_Data[Init_Data_Index] = UARTCharGetNonBlocking(UART0_BASE);
+            Init_Data_Index++;
+            if (Init_Data_Index == 20) {
+                Init_Data_Index = 0;
+                Semaphore_post(UART_Init_Semaphore);
+            }
             break;
 
-        case 3:
-            g_iInByte += (UARTCharGetNonBlocking(UART0_BASE) - 0x30) * 100;
-            break;
-
-        case 2:
-            g_iInByte += (UARTCharGetNonBlocking(UART0_BASE) - 0x30) * 10;
-            break;
-
+        // Runtime
         case 1:
-            g_iInByte += (UARTCharGetNonBlocking(UART0_BASE) - 0x30);
-            break;
-
-        default:
-            UART_Print(g_pcReceivedMsgError, g_ui8ReceivedMsgErrorLen);
+            Global_Update_Data[Update_Data_Index] = UARTCharGetNonBlocking(UART0_BASE);
+            Update_Data_Index++;
+            if (Update_Data_Index == 4) {
+                Update_Data_Index = 0;
+                Semaphore_post(UART_Update_Semaphore);
+            }
             break;
         }
-        i--;
     }
-    g_iInByte -= 4096;
-    UART_Print_Num(g_iInByte);
-    UART_Print(g_pcReceivedMsg, g_ui8ReceivedMsgLen);
     UARTIntClear(UART0_BASE, UART_INT_RX);
 }
 
 
 /**************** Clock SWIs ***************/
 void UART_Timer(void) {
-    Semaphore_post(UART_Semaphore);
+    Semaphore_post(UART_Transmit_Semaphore);
 }
 
 
 /****************** Tasks *****************/
+void UART_Init(void) {
+    while(1) {
+        Semaphore_pend(UART_Init_Semaphore, BIOS_WAIT_FOREVER);
+        int i;
+        for (i = 0; i < 20; i++) {
+            Init_Data[i] = Global_Init_Data[i];  // Copy to prevent data being overwritten
+        }
+
+        if (Init_Data[0] == 'J') {
+            Init_Joint_Number = Init_Data[1] - 0x31;
+
+            // Set up ID
+            Joints[Init_Joint_Number].Joint_Board_ID = 10*(Init_Data[2]-0x30) + (Init_Data[3]-0x30);
+
+            // Set up Encoder offset
+            Joints[Init_Joint_Number].TX_Init_Encoder_Data = 1000*(Init_Data[4]-0x30) +
+                                                        100*(Init_Data[5]-0x30) +
+                                                        10*(Init_Data[6]-0x30) +
+                                                        (Init_Data[7]-0x30);
+
+            // Set up PIDP Constant
+            Joints[Init_Joint_Number].TX_Init_PIDP_Data = 10*(Init_Data[8]-0x30) +
+                                                        (Init_Data[9]-0x30) +
+                                                        0.1*(Init_Data[10]-0x30) +
+                                                        0.01*(Init_Data[11]-0x30);
+
+            // Set up PIDP Constant
+            Joints[Init_Joint_Number].TX_Init_PIDI_Data = 10*(Init_Data[12]-0x30) +
+                                                        (Init_Data[13]-0x30) +
+                                                        0.1*(Init_Data[14]-0x30) +
+                                                        0.01*(Init_Data[15]-0x30);
+
+            // Set up PIDP Constant
+            Joints[Init_Joint_Number].TX_Init_PIDD_Data = 10*(Init_Data[16]-0x30) +
+                                                        (Init_Data[17]-0x30) +
+                                                        0.1*(Init_Data[18]-0x30) +
+                                                        0.01*(Init_Data[19]-0x30);
+            Init_Data_Index = 0;
+            if (Joint_Number == 6) {
+                UART_State = 1;
+            }
+        } else {
+            // Error
+        }
+    }
+}
+
 void UART_Transmit(void) {
     while(1) {
-        Semaphore_pend(UART_Semaphore, BIOS_WAIT_FOREVER);
+        Semaphore_pend(UART_Transmit_Semaphore, BIOS_WAIT_FOREVER);
+        int i;
+        for (i = 0; i < 6; i++) {
+            UART_Print_Num(Joints[i].RX_Data[0]);
+        }
+    }
+}
+
+void UART_Update_Position(void) {
+    while(1) {
+        Semaphore_pend(UART_Update_Semaphore, BIOS_WAIT_FOREVER);
+        int i;
+        for (i = 0; i < 4; i++) {
+            Updata_Data[i] = Global_Update_Data[i];  // Copy to prevent data being overwritten
+        }
+
+        // Set up Encoder offset
+        Joints[Joint_Index].TX_Init_Encoder_Data = 1000*(Update_Data[0]-0x30) +
+                                                    100*(Update_Data[1]-0x30) +
+                                                    10*(Update_Data[2]-0x30) +
+                                                    (Update_Data[3]-0x30);
+
+        Joint_Index++;
+        if (Joint_Index == 6) {
+            Joint_Index = 0;
+        }
     }
 }
 
@@ -109,5 +175,9 @@ void UART_Setup(void) {
 
     // Put character in output buffer
     UART_Print(g_pcStartupMsg, g_ui8StartupMsgLen);
+
+    Init_Data_Index = 0;
+    Update_Data_Index = 0;
+    Joint_Index = 0;
 }
 
