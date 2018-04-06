@@ -37,32 +37,32 @@
 
 /***************** Defines *****************/
 // Receive message IDs (just lower 5 bits)
-#define RX_ALL_ID           0x01
-#define RX_JOINT_ANGLE_ID   0x02
-#define RX_MOTOR_TORQUE_ID  0x03
-#define RX_INIT_PIDP_ID     0x04
-#define RX_INIT_PIDI_ID     0x05
-#define RX_INIT_PIDD_ID     0x06
-#define RX_INIT_ENCODER_ID  0x07
+//#define RX_ALL_ID           0x01
+//#define RX_MOTOR_TORQUE_ID  0x03
+#define RX_INIT_ENCODER_ID  0x00
+#define RX_INIT_PIDP_ID     0x01
+#define RX_INIT_PIDI_ID     0x02
+#define RX_INIT_PIDD_ID     0x03
+#define RX_JOINT_ANGLE_ID   0x04
 
 // Transmit message IDs
-#define TX_ALL_ID           0x020
-#define TX_JOINT_ANGLE_ID   0x021
-#define TX_MOTOR_TORQUE_ID  0x022
+//#define TX_ALL_ID           0x020
+//#define TX_MOTOR_TORQUE_ID  0x022
+#define TX_JOINT_ANGLE_ID   0x010
 
 // Receive message object numbers
-#define RX_ALL              1
-#define RX_JOINT_ANGLE      2
-#define RX_MOTOR_TORQUE     3
-#define RX_INIT_PIDP        4
-#define RX_INIT_PIDI        5
-#define RX_INIT_PIDD        6
-#define RX_INIT_ENCODER     7
+//#define RX_ALL              1
+//#define RX_MOTOR_TORQUE     3
+#define RX_JOINT_POS        2
+#define INIT_PIDP           4
+#define INIT_PIDI           5
+#define INIT_PIDD           6
+#define INIT_ENCODER        7
 
 // Transmit message object numbers
-#define TX_ALL              20
-#define TX_JOINT_ANGLE      21
-#define TX_MOTOR_TORQUE     22
+//#define TX_ALL              20
+//#define TX_MOTOR_TORQUE     22
+#define TX_JOINT_POS        21
 
 
 /*********** Function Prototypes ***********/
@@ -73,6 +73,7 @@ void CAN_ISR(void);
 void CAN_Timer(void);
 
 // Tasks
+void CAN_Init(void);
 void CAN_Send(void);
 
 // Helper Functions
@@ -82,7 +83,7 @@ void Setup_TX_All(void);
 void Setup_TX_Joint_Angle(void);
 void Setup_TX_Motor_Torque(void);
 void Setup_RX_All(void);
-void Setup_RX_Joint_Angle(void);
+void Setup_RX_Joint_Pos(void);
 void Setup_RX_Motor_Torque(void);
 void Setup_RX_Init_PID(void);
 void Setup_RX_Init_Encoder(void);
@@ -114,7 +115,7 @@ static bool Init_Flag = 0;
 
 // Data variables
 uint16_t TX_All_Data[2];
-uint16_t TX_Joint_Angle_Data;
+uint16_t TX_Joint_Pos_Data;
 uint16_t TX_Motor_Torque_Data;
 uint16_t RX_All_Data[2];
 uint16_t RX_Joint_Angle_Data;
@@ -125,14 +126,14 @@ float RX_Init_PIDD_Data;
 uint16_t RX_Init_Encoder_Data;
 
 // CAN transmit message objects
-tCANMsgObject CAN_TX_All;
-tCANMsgObject CAN_TX_Joint_Angle;
-tCANMsgObject CAN_TX_Motor_Torque;
+//tCANMsgObject CAN_TX_All;
+//tCANMsgObject CAN_TX_Motor_Torque;
+tCANMsgObject CAN_TX_Joint_Pos;
 
 // CAN receive message objects
-tCANMsgObject CAN_RX_All;
-tCANMsgObject CAN_RX_Joint_Angle;
-tCANMsgObject CAN_RX_Motor_Torque;
+//tCANMsgObject CAN_RX_All;
+//tCANMsgObject CAN_RX_Motor_Torque;
+tCANMsgObject CAN_RX_Joint_Pos;
 tCANMsgObject CAN_RX_Init_PIDP;
 tCANMsgObject CAN_RX_Init_PIDI;
 tCANMsgObject CAN_RX_Init_PIDD;

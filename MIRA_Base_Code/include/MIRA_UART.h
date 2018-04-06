@@ -48,6 +48,8 @@
 
 
 /***************** Defines *****************/
+#define INIT_DATA_BUFFER_LENGTH 25
+#define UPDATE_DATA_BUFFER_LENGTH 7
 
 
 /*********** Function Prototypes ***********/
@@ -60,7 +62,7 @@ void UART_Timer(void);
 // Tasks
 void UART_Init(void);
 void UART_Transmit(void);
-void UART_Update_Position(void);
+void UART_Update_Joints(void);
 
 // Helper Functions
 void UART_Print(char* str, uint8_t len);
@@ -71,14 +73,14 @@ void UART_Setup(void);
 
 
 /************* Global Variables ************/
-static uint32_t UART_State = 0;
+volatile uint32_t UART_State;
 
-uint8_t Init_Data[20];
-volatile uint8_t Global_Init_Data[20];
+uint8_t Init_Data[INIT_DATA_BUFFER_LENGTH];
+volatile uint8_t Global_Init_Data[INIT_DATA_BUFFER_LENGTH];
 uint32_t Init_Data_Index;
 
-uint8_t Update_Data[4];
-volatile uint8_t Global_Update_Data[4];
+uint8_t Update_Data[UPDATE_DATA_BUFFER_LENGTH];
+volatile uint8_t Global_Update_Data[UPDATE_DATA_BUFFER_LENGTH];
 uint32_t Update_Data_Index;
 
 uint32_t Init_Joint_Number; // Joint index for initialization
@@ -86,13 +88,14 @@ uint32_t Joint_Index;       // Joint index for updates
 
 
 // Strings for printing
-static char* g_pcStartupMsg = "Initialized!\n\r";
-static uint8_t g_ui8StartupMsgLen = 15;
-static char* g_pcReceivedMsg = "Message received!\n\r";
-static uint8_t g_ui8ReceivedMsgLen = 20;
-static char* g_pcReceivedMsgError = "Error receiving message\n\r";
-static uint8_t g_ui8ReceivedMsgErrorLen = 26;
-
+static char* Startup_Message = "Initialized!";
+static uint8_t Startup_Message_Length = 12;
+static char* Received_Message = "Message received!\n\r";
+static uint8_t Received_Message_Length = 20;
+static char* Receive_Error_Message = "Error receiving message\n\r";
+static uint8_t Receive_Error_Message_Length = 26;
+static char* Ack_Pointer = "Y";
+static uint8_t Ack_Pointer_Length = 1;
 
 
 #endif /* INCLUDE_MIRA_UART_H_ */

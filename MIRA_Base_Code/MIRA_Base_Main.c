@@ -75,10 +75,16 @@ bool heartbeat = false;
 // Heartbeat that blinks the onboard LED at 1Hz
 void Heartbeat(void) {
     if (heartbeat) {
-        GPIOPinWrite(GPIO_PORTF_BASE, HEARTBEAT_PIN, HEARTBEAT_PIN);
+        if (UART_State) {
+            GPIOPinWrite(HEARTBEAT_PORT, HEARTBEAT_BLUE_PIN, HEARTBEAT_BLUE_PIN);
+//            UART_Print_Num(33);
+        } else {
+            GPIOPinWrite(HEARTBEAT_PORT, HEARTBEAT_RED_PIN, HEARTBEAT_RED_PIN);
+//            UART_Print_Num(22);
+        }
         heartbeat = false;
     } else {
-        GPIOPinWrite(GPIO_PORTF_BASE, HEARTBEAT_PIN, 0);
+        GPIOPinWrite(HEARTBEAT_PORT, HEARTBEAT_RED_PIN | HEARTBEAT_BLUE_PIN, 0);
         heartbeat = true;
     }
 }
@@ -114,6 +120,7 @@ int main(void) {
     CAN_Setup();
     UART_Setup();
 
+    IntMasterEnable();
 
     // Start the BIOS
     BIOS_start();

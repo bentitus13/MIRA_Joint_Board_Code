@@ -44,40 +44,17 @@
 
 /************ Local Header files ***********/
 #include "include/MIRA_GPIO.h"
+#include "include/MIRA_UART.h"
 
 
 /***************** Defines *****************/
-// Receive message IDs (just lower 5 bits)IDs
-#define RX_JOINT1_ID        0x001
-#define RX_JOINT2_ID        0x002
-#define RX_JOINT3_ID        0x003
-#define RX_JOINT4_ID        0x004
-#define RX_JOINT5_ID        0x005
-#define RX_JOINT6_ID        0x006
-
-// Transmit message IDs
-#define TX_JOINT1_ID        0x021
-#define TX_JOINT2_ID        0x022
-#define TX_JOINT3_ID        0x023
-#define TX_JOINT4_ID        0x024
-#define TX_JOINT5_ID        0x025
-#define TX_JOINT6_ID        0x026
-
-// Receive message object numbers
-#define RX_JOINT1           1
-#define RX_JOINT2           2
-#define RX_JOINT3           3
-#define RX_JOINT4           4
-#define RX_JOINT5           5
-#define RX_JOINT6           6
-
-// Transmit message object numbers
-#define TX_JOINT1           21
-#define TX_JOINT2           22
-#define TX_JOINT3           23
-#define TX_JOINT4           24
-#define TX_JOINT5           25
-#define TX_JOINT6           26
+// Message IDs (just lower 5 bits)IDs
+#define INIT_ENCODER       0X00
+#define INIT_PIDP          0x01
+#define INIT_PIDI          0x02
+#define INIT_PIDD          0x03
+#define TX_JOINT_POS       0x04
+#define RX_JOINT_POS       0x10
 
 
 /*********** Function Prototypes ***********/
@@ -88,6 +65,7 @@ void CAN_ISR(void);
 void CAN_Timer(void);
 
 // Tasks
+void CAN_Init(void);
 void CAN_Send(void);
 
 // Helper Functions
@@ -142,7 +120,7 @@ typedef struct Joint_Struct {
 enum Joint_Number{JOINT1, JOINT2, JOINT3, JOINT4, JOINT5, JOINT6};
 
 // Joints
-volatile Joint Joints[6];
+Joint Joints[6];
 
 // Message count variables
 static volatile uint32_t TX0_Message_Count = 0;
@@ -156,6 +134,8 @@ static volatile bool RX0_Flag = 0;
 
 // Global initialized flag
 static bool Init_Flag = 0;
+
+volatile uint32_t CAN_State;
 
 
 #endif /* INCLUDE_MIRA_CAN_H_ */

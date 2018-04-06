@@ -37,11 +37,11 @@ void Pin_Setup(void) {
 
 
     // Pf2 is Heartbeat LED (Blue)
-    GPIOPinTypeGPIOOutput(HEARTBEAT_PORT, HEARTBEAT_PIN);
+    GPIOPinTypeGPIOOutput(HEARTBEAT_PORT, HEARTBEAT_RED_PIN | HEARTBEAT_BLUE_PIN);
 
 
     // Initialize CAN0RX and CAN0TX
     GPIOPinConfigure(CANRX_CONFIG);
     GPIOPinConfigure(CANTX_CONFIG);
-    GPIOPinTypeCAN(CAN_PORT, GPIO_PIN_4 | GPIO_PIN_5);
+    GPIOPinTypeCAN(CAN_PORT, CANRX_PIN | CANTX_PIN);
 }

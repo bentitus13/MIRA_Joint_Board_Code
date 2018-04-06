@@ -53,7 +53,9 @@
 // Heartbeat
 #define HEARTBEAT_PORT     GPIO_PORTF_BASE  // Pin F2
 
-#define HEARTBEAT_PIN      GPIO_PIN_2       // Pin F2
+#define HEARTBEAT_RED_PIN  GPIO_PIN_1       // Pin F1
+#define HEARTBEAT_BLUE_PIN GPIO_PIN_2       // Pin F2
+
 
 
 /*********** Function Prototypes ***********/
