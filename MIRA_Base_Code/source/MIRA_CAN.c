@@ -198,8 +198,12 @@ void CAN_ISR(void) {
 /**************** Clock SWIs ***************/
 // Release the CAN task, CAN_Send
 void CAN_Timer(void) {
-    if (CAN_State) {
+    if (CAN_State == 4) {
         Semaphore_post(CAN_Transmit_Semaphore);
+    } else {
+        if (UART_State) {
+            Semaphore_post(CAN_Init_Semaphore);
+        }
     }
 }
 
@@ -208,40 +212,57 @@ void CAN_Timer(void) {
 void CAN_Init(void) {
     while(1) {
         Semaphore_pend(CAN_Init_Semaphore, BIOS_WAIT_FOREVER);
-        if (UART_State && (CAN_State == 0)) {
-
-            // Set message data pointers for encoder offset
+        if (UART_State) {
             int i;
-            for (i = 0; i < 6; i++) {
-                Joints[i].CAN_TX_Joint.ui32MsgID &= 0x7E0;
-                Joints[i].CAN_TX_Joint.ui32MsgID |= INIT_ENCODER;
-                Joints[i].CAN_TX_Joint.ui32MsgLen = sizeof(Joints[i].TX_Init_Encoder_Data);
-                Joints[i].CAN_TX_Joint.pui8MsgData = (uint8_t *) Joints[i].TX_Init_Encoder_Data;
-                CANMessageSet(CAN0_BASE, Joints[i].TX_Object_Number, &Joints[i].CAN_TX_Joint, MSG_OBJ_TYPE_TX);
-            }
-            for (i = 0; i < 6; i++) {
-                Joints[i].CAN_TX_Joint.ui32MsgID &= 0x7E0;
-                Joints[i].CAN_TX_Joint.ui32MsgID |= INIT_PIDP;
-                Joints[i].CAN_TX_Joint.ui32MsgLen = sizeof(Joints[i].TX_Init_PIDP_Data);
-                Joints[i].CAN_TX_Joint.pui8MsgData = (uint8_t *) &Joints[i].TX_Init_PIDP_Data;
-                CANMessageSet(CAN0_BASE, Joints[i].TX_Object_Number, &Joints[i].CAN_TX_Joint, MSG_OBJ_TYPE_TX);
-            }
-            for (i = 0; i < 6; i++) {
-                Joints[i].CAN_TX_Joint.ui32MsgID &= 0x7E0;
-                Joints[i].CAN_TX_Joint.ui32MsgID |= INIT_PIDI;
-                Joints[i].CAN_TX_Joint.ui32MsgLen = sizeof(Joints[i].TX_Init_PIDI_Data);
-                Joints[i].CAN_TX_Joint.pui8MsgData = (uint8_t *) &Joints[i].TX_Init_PIDI_Data;
-                CANMessageSet(CAN0_BASE, Joints[i].TX_Object_Number, &Joints[i].CAN_TX_Joint, MSG_OBJ_TYPE_TX);
-            }
-            for (i = 0; i < 6; i++) {
-                Joints[i].CAN_TX_Joint.ui32MsgID &= 0x7E0;
-                Joints[i].CAN_TX_Joint.ui32MsgID |= INIT_PIDD;
-                Joints[i].CAN_TX_Joint.ui32MsgLen = sizeof(Joints[i].TX_Init_PIDD_Data);
-                Joints[i].CAN_TX_Joint.pui8MsgData = (uint8_t *) &Joints[i].TX_Init_PIDD_Data;
-                CANMessageSet(CAN0_BASE, Joints[i].TX_Object_Number, &Joints[i].CAN_TX_Joint, MSG_OBJ_TYPE_TX);
-            }
+            switch (CAN_State) {
+            case 0:
+                // Set message data pointers for encoder offset
+                for (i = 0; i < 6; i++) {
+                    Joints[i].CAN_TX_Joint.ui32MsgID &= 0x7E0;
+                    Joints[i].CAN_TX_Joint.ui32MsgID |= INIT_ENCODER;
+                    Joints[i].CAN_TX_Joint.ui32MsgLen = sizeof(Joints[i].TX_Init_Encoder_Data);
+                    Joints[i].CAN_TX_Joint.pui8MsgData = (uint8_t *) Joints[i].TX_Init_Encoder_Data;
+                    CANMessageSet(CAN0_BASE, Joints[i].TX_Object_Number, &Joints[i].CAN_TX_Joint, MSG_OBJ_TYPE_TX);
+                }
+                CAN_State = 1;
+                break;
 
-            CAN_State = 1;
+            case 1:
+
+                for (i = 0; i < 6; i++) {
+                    Joints[i].CAN_TX_Joint.ui32MsgID &= 0x7E0;
+                    Joints[i].CAN_TX_Joint.ui32MsgID |= INIT_PIDP;
+                    Joints[i].CAN_TX_Joint.ui32MsgLen = sizeof(Joints[i].TX_Init_PIDP_Data);
+                    Joints[i].CAN_TX_Joint.pui8MsgData = (uint8_t *) &Joints[i].TX_Init_PIDP_Data;
+                    CANMessageSet(CAN0_BASE, Joints[i].TX_Object_Number, &Joints[i].CAN_TX_Joint, MSG_OBJ_TYPE_TX);
+                }
+                CAN_State = 2;
+                break;
+
+            case 2:
+                for (i = 0; i < 6; i++) {
+                    Joints[i].CAN_TX_Joint.ui32MsgID &= 0x7E0;
+                    Joints[i].CAN_TX_Joint.ui32MsgID |= INIT_PIDI;
+                    Joints[i].CAN_TX_Joint.ui32MsgLen = sizeof(Joints[i].TX_Init_PIDI_Data);
+                    Joints[i].CAN_TX_Joint.pui8MsgData = (uint8_t *) &Joints[i].TX_Init_PIDI_Data;
+                    CANMessageSet(CAN0_BASE, Joints[i].TX_Object_Number, &Joints[i].CAN_TX_Joint, MSG_OBJ_TYPE_TX);
+                }
+                CAN_State = 3;
+                break;
+
+            case 3:
+                for (i = 0; i < 6; i++) {
+                    Joints[i].CAN_TX_Joint.ui32MsgID &= 0x7E0;
+                    Joints[i].CAN_TX_Joint.ui32MsgID |= INIT_PIDD;
+                    Joints[i].CAN_TX_Joint.ui32MsgLen = sizeof(Joints[i].TX_Init_PIDD_Data);
+                    Joints[i].CAN_TX_Joint.pui8MsgData = (uint8_t *) &Joints[i].TX_Init_PIDD_Data;
+                    CANMessageSet(CAN0_BASE, Joints[i].TX_Object_Number, &Joints[i].CAN_TX_Joint, MSG_OBJ_TYPE_TX);
+                }
+                CAN_State = 4;
+                break;
+            default:
+                break;
+            }
         }
     }
 }
@@ -259,9 +280,9 @@ void CAN_Send(void) {
                 Joints[i].CAN_TX_Joint.ui32MsgLen = sizeof(Joints[i].TX_Data[0]);
                 Joints[i].CAN_TX_Joint.pui8MsgData = (uint8_t *) Joints[i].TX_Data[0];
                 CANMessageSet(CAN0_BASE, Joints[i].TX_Object_Number, &Joints[i].CAN_TX_Joint, MSG_OBJ_TYPE_TX);
+                Joints[i].TX_Data[0] += 1;
+                Joints[i].TX_Data[0] &= 4096;
             }
-            Joints[0].TX_Data[0] += 1;
-            Joints[0].TX_Data[0] &= 4096;
         }
     }
 }

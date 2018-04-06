@@ -101,7 +101,7 @@ uint16_t Message_ID;
 
 // Message count variables
 static volatile uint32_t TX0_Message_Count = 0;
-static volatile uint32_t RX0_Mesage_Count = 0;
+static volatile uint32_t RX0_Message_Count = 0;
 
 // Global error flags
 static volatile uint32_t CAN_Error_Flag = 0;

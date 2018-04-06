@@ -134,7 +134,7 @@ void PID_Calc(void) {
             Error_Sum += Past_Errors[i];
         }
 
-        Floating_Setpoint = (0xFFF & (RX_Init_Encoder_Data - Encoder_Offset)) * 360. / 4096.;
+        Floating_Setpoint = (0xFFF & (RX_Joint_Angle_Data - RX_Init_Encoder_Data)) * 360. / 4096.;
         Error = Floating_Setpoint - Joint_Angle;
         Error_Sum += Error;
 

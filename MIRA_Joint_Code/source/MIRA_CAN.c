@@ -22,10 +22,13 @@ void CAN_ISR(void) {
         CAN_RX_Joint_Pos.pui8MsgData = (uint8_t *) RX_Joint_Angle_Data;
 
         // Get message data
-        CANMessageGet(CAN0_BASE, RX_JOINT_ANGLE_ID, &CAN_RX_Joint_Pos, 1);
+        CANMessageGet(CAN0_BASE, RX_JOINT_POS, &CAN_RX_Joint_Pos, 0);
+
+        // Clear interrupt
+        CANIntClear(CAN0_BASE, RX_JOINT_POS);
 
         // Increment received message count
-        RX0_Mesage_Count++;
+        RX0_Message_Count++;
 
         // Since a message was transmitted, clear any error flags.
         CAN_Error_Flag = 0;
@@ -41,8 +44,8 @@ void CAN_ISR(void) {
         // Get message data
         CANMessageGet(CAN0_BASE, INIT_ENCODER, &CAN_RX_Init_Encoder, 1);
 
-        // Increment a counter to keep track of how many messages have been transmitted.
-        TX0_Message_Count++;
+        // Increment a counter to keep track of how many messages have been received.
+        RX0_Message_Count++;
 
         // Since a message was transmitted, clear any error flags.
         CAN_Error_Flag = 0;
@@ -58,8 +61,8 @@ void CAN_ISR(void) {
         // Get message data
         CANMessageGet(CAN0_BASE, INIT_PIDP, &CAN_RX_Init_PIDP, 1);
 
-        // Increment a counter to keep track of how many messages have been transmitted.
-        TX0_Message_Count++;
+        // Increment a counter to keep track of how many messages have been received.
+        RX0_Message_Count++;
 
         // Since a message was transmitted, clear any error flags.
         CAN_Error_Flag = 0;
@@ -75,8 +78,8 @@ void CAN_ISR(void) {
         // Get message data
         CANMessageGet(CAN0_BASE, INIT_PIDI, &CAN_RX_Init_PIDI, 1);
 
-        // Increment a counter to keep track of how many messages have been transmitted.
-        TX0_Message_Count++;
+        // Increment a counter to keep track of how many messages have been received.
+        RX0_Message_Count++;
 
         // Since a message was transmitted, clear any error flags.
         CAN_Error_Flag = 0;
@@ -92,8 +95,8 @@ void CAN_ISR(void) {
         // Get message data
         CANMessageGet(CAN0_BASE, INIT_PIDD, &CAN_RX_Init_PIDD, 1);
 
-        // Increment a counter to keep track of how many messages have been transmitted.
-        TX0_Message_Count++;
+        // Increment a counter to keep track of how many messages have been received.
+        RX0_Message_Count++;
 
         // Since a message was transmitted, clear any error flags.
         CAN_Error_Flag = 0;
@@ -101,6 +104,16 @@ void CAN_ISR(void) {
         // Set a bit high in CAN_Setup
         CAN_Init |= 0x08;
         break;
+
+    case TX_JOINT_POS:
+        // Set to receive so the controller doesn't spam messages
+        CANMessageGet(CAN0_BASE, TX_JOINT_POS, &CAN_TX_Joint_Pos, MSG_OBJ_TYPE_RX_REMOTE);
+
+        // Increment a counter to keep track of how many messages have been transmitted.
+        TX0_Message_Count++;
+
+        // Since a message was transmitted, clear any error flags.
+        CAN_Error_Flag = 0;
 
     default: // status or other interrupt: clear it and set error flags
         CAN_Error_Flag |= CANStatusGet(CAN0_BASE, CAN_STS_CONTROL);
@@ -259,7 +272,7 @@ void Setup_TX_Joint_Pos(void) {
 
 void Setup_RX_Joint_Pos(void) {
     CAN_RX_Joint_Pos.ui32MsgID = Message_ID | RX_JOINT_ANGLE_ID;               // Set ID to Base module address
-    CAN_RX_Joint_Pos.ui32MsgIDMask = 0x7E0;                                    // Set mask to 0, doesn't matter for this
+    CAN_RX_Joint_Pos.ui32MsgIDMask = 0xFFF;                                    // Set mask to 0, doesn't matter for this
     CAN_RX_Joint_Pos.ui32Flags = MSG_OBJ_RX_INT_ENABLE;                        // Set TX interrupt flag
     CAN_RX_Joint_Pos.ui32MsgLen = sizeof(RX_Joint_Angle_Data);                 // Set length to 1 byte
     CAN_RX_Joint_Pos.pui8MsgData = (uint8_t *) RX_Joint_Angle_Data;            // Set the message data pointer
@@ -268,7 +281,7 @@ void Setup_RX_Joint_Pos(void) {
 
 void Setup_RX_Init_PIDP(void) {
     CAN_RX_Init_PIDP.ui32MsgID = Message_ID | RX_INIT_PIDP_ID;                 // Set ID to Base module address
-    CAN_RX_Init_PIDP.ui32MsgIDMask = 0x7E0;                                    // Set mask to 0, doesn't matter for this
+    CAN_RX_Init_PIDP.ui32MsgIDMask = 0xFFF;                                    // Set mask to 0, doesn't matter for this
     CAN_RX_Init_PIDP.ui32Flags = MSG_OBJ_RX_INT_ENABLE;                        // Set TX interrupt flag
     CAN_RX_Init_PIDP.ui32MsgLen = sizeof(RX_Init_PIDP_Data);                   // Set length to 1 byte
     CAN_RX_Init_PIDP.pui8MsgData = (uint8_t *) &RX_Init_PIDP_Data;             // Set the message data pointer
@@ -277,7 +290,7 @@ void Setup_RX_Init_PIDP(void) {
 
 void Setup_RX_Init_PIDI(void) {
     CAN_RX_Init_PIDI.ui32MsgID = Message_ID | RX_INIT_PIDI_ID;                 // Set ID to Base module address
-    CAN_RX_Init_PIDI.ui32MsgIDMask = 0x7E0;                                    // Set mask to 0, doesn't matter for this
+    CAN_RX_Init_PIDI.ui32MsgIDMask = 0xFFF;                                    // Set mask to 0, doesn't matter for this
     CAN_RX_Init_PIDI.ui32Flags = MSG_OBJ_RX_INT_ENABLE;                        // Set TX interrupt flag
     CAN_RX_Init_PIDI.ui32MsgLen = sizeof(RX_Init_PIDI_Data);                   // Set length to 1 byte
     CAN_RX_Init_PIDI.pui8MsgData = (uint8_t *) &RX_Init_PIDI_Data;             // Set the message data pointer
