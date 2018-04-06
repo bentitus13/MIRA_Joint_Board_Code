@@ -73,7 +73,6 @@ void CAN_ISR(void);
 void CAN_Timer(void);
 
 // Tasks
-void CAN_Init(void);
 void CAN_Send(void);
 
 // Helper Functions
@@ -124,6 +123,7 @@ float RX_Init_PIDP_Data;
 float RX_Init_PIDI_Data;
 float RX_Init_PIDD_Data;
 uint16_t RX_Init_Encoder_Data;
+volatile uint32_t CAN_Init;
 
 // CAN transmit message objects
 //tCANMsgObject CAN_TX_All;

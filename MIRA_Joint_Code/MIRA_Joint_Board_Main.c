@@ -134,13 +134,13 @@ void PID_Calc(void) {
             Error_Sum += Past_Errors[i];
         }
 
-        Floating_Setpoint = (0xFFF & (Setpoint - Encoder_Offset)) * 360. / 4096.;
+        Floating_Setpoint = (0xFFF & (RX_Init_Encoder_Data - Encoder_Offset)) * 360. / 4096.;
         Error = Floating_Setpoint - Joint_Angle;
         Error_Sum += Error;
 
-        P_Val = Kp * Error;
-        I_Val = Ki * Error_Sum / SAMPLE_FREQUENCY;
-        D_Val = Kd * (Error - Past_Error) * SAMPLE_FREQUENCY;
+        P_Val = RX_Init_PIDP_Data * Error;
+        I_Val = RX_Init_PIDI_Data * Error_Sum / SAMPLE_FREQUENCY;
+        D_Val = RX_Init_PIDD_Data * (Error - Past_Error) * SAMPLE_FREQUENCY;
 
         if (P_Val > 4095) {
             P_Val = 4095;
