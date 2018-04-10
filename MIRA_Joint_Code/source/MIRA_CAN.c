@@ -18,14 +18,16 @@ void CAN_ISR(void) {
 
     switch(Status) {
     case RX_JOINT_POS: // message received
+        // Reset the flags?
+        CAN_RX_Joint_Pos.ui32Flags = MSG_OBJ_RX_INT_ENABLE;
+
+        CAN_RX_Joint_Pos.ui32MsgLen = sizeof(RX_Joint_Angle_Data);
+
         // Set message data pointer
         CAN_RX_Joint_Pos.pui8MsgData = (uint8_t *) RX_Joint_Angle_Data;
 
         // Get message data
-        CANMessageGet(CAN0_BASE, RX_JOINT_POS, &CAN_RX_Joint_Pos, 0);
-
-        // Clear interrupt
-        CANIntClear(CAN0_BASE, RX_JOINT_POS);
+        CANMessageGet(CAN0_BASE, RX_JOINT_POS, &CAN_RX_Joint_Pos, 1);
 
         // Increment received message count
         RX0_Message_Count++;

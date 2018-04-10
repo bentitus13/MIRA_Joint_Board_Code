@@ -281,7 +281,7 @@ void CAN_Send(void) {
                 Joints[i].CAN_TX_Joint.pui8MsgData = (uint8_t *) Joints[i].TX_Data[0];
                 CANMessageSet(CAN0_BASE, Joints[i].TX_Object_Number, &Joints[i].CAN_TX_Joint, MSG_OBJ_TYPE_TX);
                 Joints[i].TX_Data[0] += 1;
-                Joints[i].TX_Data[0] &= 4096;
+                Joints[i].TX_Data[0] &= 4095;
             }
         }
     }
