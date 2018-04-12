@@ -18,9 +18,6 @@ void CAN_ISR(void) {
 
     switch(Status) {
     case RX_JOINT_POS: // message received
-        // Set message size
-        CAN_RX_Joint_Pos.ui32MsgLen = sizeof(RX_Joint_Angle_Data);
-
         // Set message data pointer
         CAN_RX_Joint_Pos.pui8MsgData = (uint8_t *) RX_Joint_Angle_Data;
 
@@ -127,7 +124,7 @@ void CAN_ISR(void) {
 
     case TX_JOINT_POS:
         // Set to receive so the controller doesn't spam messages
-        CANMessageSet(CAN0_BASE, TX_JOINT_POS, &CAN_TX_Joint_Pos, MSG_OBJ_TYPE_RX_REMOTE);
+        CANMessageSet(CAN0_BASE, TX_JOINT_POS, &CAN_TX_Joint_Pos, MSG_OBJ_TYPE_RX);
 
         // Clear the interrupt
         CANIntClear(CAN0_BASE, TX_JOINT_POS);
@@ -298,7 +295,7 @@ void Setup_TX_Joint_Pos(void) {
 void Setup_RX_Joint_Pos(void) {
     CAN_RX_Joint_Pos.ui32MsgID = Message_ID | RX_JOINT_ANGLE_ID;               // Set ID to Base module address
     CAN_RX_Joint_Pos.ui32MsgIDMask = 0xFFF;                                    // Set mask to 0, doesn't matter for this
-    CAN_RX_Joint_Pos.ui32Flags = MSG_OBJ_RX_INT_ENABLE;                        // Set TX interrupt flag
+    CAN_RX_Joint_Pos.ui32Flags = MSG_OBJ_RX_INT_ENABLE | MSG_OBJ_USE_ID_FILTER;                        // Set TX interrupt flag
     CAN_RX_Joint_Pos.ui32MsgLen = sizeof(RX_Joint_Angle_Data);                 // Set length to 1 byte
     CAN_RX_Joint_Pos.pui8MsgData = (uint8_t *) RX_Joint_Angle_Data;            // Set the message data pointer
     CANMessageSet(CAN0_BASE, RX_JOINT_POS, &CAN_RX_Joint_Pos, MSG_OBJ_TYPE_RX);
@@ -307,7 +304,7 @@ void Setup_RX_Joint_Pos(void) {
 void Setup_RX_Init_PIDP(void) {
     CAN_RX_Init_PIDP.ui32MsgID = Message_ID | RX_INIT_PIDP_ID;                 // Set ID to Base module address
     CAN_RX_Init_PIDP.ui32MsgIDMask = 0xFFF;                                    // Set mask to 0, doesn't matter for this
-    CAN_RX_Init_PIDP.ui32Flags = MSG_OBJ_RX_INT_ENABLE;                        // Set TX interrupt flag
+    CAN_RX_Init_PIDP.ui32Flags = MSG_OBJ_RX_INT_ENABLE | MSG_OBJ_USE_ID_FILTER;                        // Set TX interrupt flag
     CAN_RX_Init_PIDP.ui32MsgLen = sizeof(RX_Init_PIDP_Data);                   // Set length to 1 byte
     CAN_RX_Init_PIDP.pui8MsgData = (uint8_t *) &RX_Init_PIDP_Data;             // Set the message data pointer
     CANMessageSet(CAN0_BASE, INIT_PIDP, &CAN_RX_Init_PIDP, MSG_OBJ_TYPE_RX);
@@ -316,7 +313,7 @@ void Setup_RX_Init_PIDP(void) {
 void Setup_RX_Init_PIDI(void) {
     CAN_RX_Init_PIDI.ui32MsgID = Message_ID | RX_INIT_PIDI_ID;                 // Set ID to Base module address
     CAN_RX_Init_PIDI.ui32MsgIDMask = 0xFFF;                                    // Set mask to 0, doesn't matter for this
-    CAN_RX_Init_PIDI.ui32Flags = MSG_OBJ_RX_INT_ENABLE;                        // Set TX interrupt flag
+    CAN_RX_Init_PIDI.ui32Flags = MSG_OBJ_RX_INT_ENABLE | MSG_OBJ_USE_ID_FILTER;                        // Set TX interrupt flag
     CAN_RX_Init_PIDI.ui32MsgLen = sizeof(RX_Init_PIDI_Data);                   // Set length to 1 byte
     CAN_RX_Init_PIDI.pui8MsgData = (uint8_t *) &RX_Init_PIDI_Data;             // Set the message data pointer
     CANMessageSet(CAN0_BASE, INIT_PIDI, &CAN_RX_Init_PIDI, MSG_OBJ_TYPE_RX);
@@ -325,7 +322,7 @@ void Setup_RX_Init_PIDI(void) {
 void Setup_RX_Init_PIDD(void) {
     CAN_RX_Init_PIDD.ui32MsgID = Message_ID | RX_INIT_PIDD_ID;                 // Set ID to Base module address
     CAN_RX_Init_PIDD.ui32MsgIDMask = 0xFFF;                                    // Set mask to 0, doesn't matter for this
-    CAN_RX_Init_PIDD.ui32Flags = MSG_OBJ_RX_INT_ENABLE;                        // Set TX interrupt flag
+    CAN_RX_Init_PIDD.ui32Flags = MSG_OBJ_RX_INT_ENABLE | MSG_OBJ_USE_ID_FILTER;                        // Set TX interrupt flag
     CAN_RX_Init_PIDD.ui32MsgLen = sizeof(RX_Init_PIDD_Data);                   // Set length to 1 byte
     CAN_RX_Init_PIDD.pui8MsgData = (uint8_t *) &RX_Init_PIDD_Data;             // Set the message data pointer
     CANMessageSet(CAN0_BASE, INIT_PIDD, &CAN_RX_Init_PIDD, MSG_OBJ_TYPE_RX);
@@ -334,7 +331,7 @@ void Setup_RX_Init_PIDD(void) {
 void Setup_RX_Init_Encoder(void) {
     CAN_RX_Init_Encoder.ui32MsgID = Message_ID | RX_INIT_ENCODER_ID;           // Set ID to Base module address
     CAN_RX_Init_Encoder.ui32MsgIDMask = 0xFFF;                                     // Set mask to 0, doesn't matter for this
-    CAN_RX_Init_Encoder.ui32Flags = MSG_OBJ_RX_INT_ENABLE;                     // Set TX interrupt flag
+    CAN_RX_Init_Encoder.ui32Flags = MSG_OBJ_RX_INT_ENABLE | MSG_OBJ_USE_ID_FILTER;                     // Set TX interrupt flag
     CAN_RX_Init_Encoder.ui32MsgLen = sizeof(RX_Init_Encoder_Data);             // Set length to 1 byte
     CAN_RX_Init_Encoder.pui8MsgData = (uint8_t *) RX_Init_Encoder_Data;        // Set the message data pointer
     CANMessageSet(CAN0_BASE, INIT_ENCODER, &CAN_RX_Init_Encoder, MSG_OBJ_TYPE_RX);

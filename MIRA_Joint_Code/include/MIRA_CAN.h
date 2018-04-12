@@ -117,7 +117,7 @@ uint16_t TX_All_Data[2];
 uint16_t TX_Joint_Pos_Data;
 uint16_t TX_Motor_Torque_Data;
 uint16_t RX_All_Data[2];
-uint16_t RX_Joint_Angle_Data;
+volatile uint16_t RX_Joint_Angle_Data;
 uint16_t RX_Motor_Torque_Data;
 float RX_Init_PIDP_Data;
 float RX_Init_PIDI_Data;

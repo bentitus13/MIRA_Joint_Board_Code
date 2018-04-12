@@ -114,7 +114,7 @@ void CAN_ISR(void) {
 //        RX0_Flag = 1;
     } else if (Status == Joints[0].TX_Object_Number) {
         // Set message type to RX so that it doesn't continually transmit messages
-        CANMessageSet(CAN0_BASE, Joints[0].TX_Object_Number, &Joints[0].CAN_TX_Joint, MSG_OBJ_TYPE_RX_REMOTE);
+        CANMessageSet(CAN0_BASE, Joints[0].TX_Object_Number, &Joints[0].CAN_TX_Joint, MSG_OBJ_TYPE_RX);
 
         // Clear the message object interrupt.
         CANIntClear(CAN0_BASE, Joints[0].TX_Object_Number);
@@ -126,7 +126,7 @@ void CAN_ISR(void) {
         CAN_Error_Flag = 0;
     } else if (Status == Joints[1].TX_Object_Number) {
         // Set message type to RX so that it doesn't continually transmit messages
-        CANMessageSet(CAN0_BASE, Joints[1].TX_Object_Number, &Joints[1].CAN_TX_Joint, MSG_OBJ_TYPE_RX_REMOTE);
+        CANMessageSet(CAN0_BASE, Joints[1].TX_Object_Number, &Joints[1].CAN_TX_Joint, MSG_OBJ_TYPE_RX);
 
         // Clear the message object interrupt.
         CANIntClear(CAN0_BASE, Joints[1].TX_Object_Number);
@@ -138,7 +138,7 @@ void CAN_ISR(void) {
         CAN_Error_Flag = 0;
     } else if (Status == Joints[2].TX_Object_Number) {
         // Set message type to RX so that it doesn't continually transmit messages
-        CANMessageSet(CAN0_BASE, Joints[2].TX_Object_Number, &Joints[2].CAN_TX_Joint, MSG_OBJ_TYPE_RX_REMOTE);
+        CANMessageSet(CAN0_BASE, Joints[2].TX_Object_Number, &Joints[2].CAN_TX_Joint, MSG_OBJ_TYPE_RX);
 
         // Clear the message object interrupt.
         CANIntClear(CAN0_BASE, Joints[2].TX_Object_Number);
@@ -150,7 +150,7 @@ void CAN_ISR(void) {
         CAN_Error_Flag = 0;
     } else if (Status == Joints[3].TX_Object_Number) {
         // Set message type to RX so that it doesn't continually transmit messages
-        CANMessageSet(CAN0_BASE, Joints[3].TX_Object_Number, &Joints[3].CAN_TX_Joint, MSG_OBJ_TYPE_RX_REMOTE);
+        CANMessageSet(CAN0_BASE, Joints[3].TX_Object_Number, &Joints[3].CAN_TX_Joint, MSG_OBJ_TYPE_RX);
 
         // Clear the message object interrupt.
         CANIntClear(CAN0_BASE, Joints[3].TX_Object_Number);
@@ -162,7 +162,7 @@ void CAN_ISR(void) {
         CAN_Error_Flag = 0;
     } else if (Status == Joints[4].TX_Object_Number) {
         // Set message type to RX so that it doesn't continually transmit messages
-        CANMessageSet(CAN0_BASE, Joints[4].TX_Object_Number, &Joints[4].CAN_TX_Joint, MSG_OBJ_TYPE_RX_REMOTE);
+        CANMessageSet(CAN0_BASE, Joints[4].TX_Object_Number, &Joints[4].CAN_TX_Joint, MSG_OBJ_TYPE_RX);
 
         // Clear the message object interrupt.
         CANIntClear(CAN0_BASE, Joints[4].TX_Object_Number);
@@ -174,7 +174,7 @@ void CAN_ISR(void) {
         CAN_Error_Flag = 0;
     } else if (Status == Joints[5].TX_Object_Number) {
         // Set message type to RX so that it doesn't continually transmit messages
-        CANMessageSet(CAN0_BASE, Joints[5].TX_Object_Number, &Joints[5].CAN_TX_Joint, MSG_OBJ_TYPE_RX_REMOTE);
+        CANMessageSet(CAN0_BASE, Joints[5].TX_Object_Number, &Joints[5].CAN_TX_Joint, MSG_OBJ_TYPE_RX);
 
         // Clear the message object interrupt.
         CANIntClear(CAN0_BASE, Joints[5].TX_Object_Number);
