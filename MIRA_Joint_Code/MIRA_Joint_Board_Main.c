@@ -72,7 +72,7 @@ void PID_Calc(void);
 
 
 /************* Global Variables ************/
-bool heartbeat = false;
+volatile bool heartbeat = false;
 int idle_count;
 float Kp, Ki, Kd;
 uint32_t Setpoint;

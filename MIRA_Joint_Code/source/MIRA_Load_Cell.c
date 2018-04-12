@@ -11,7 +11,9 @@
 
 /******************* HWIs ******************/
 void Load_Cell_ISR(void) {
+    IntMasterDisable();
     ADCIntClear(ADC0_BASE, 1);
+    IntMasterEnable();
     ADCSequenceDataGet(ADC0_BASE, 1, &Load_Cell_Value);
     Load_Cell_Values[Load_Cell_Index] = Load_Cell_Value;
     Load_Cell_Index = 0x07 & (Load_Cell_Value + 1);

@@ -65,7 +65,7 @@ void Init_Stuff(void);
 
 
 /************* Global Variables ************/
-bool heartbeat = false;
+volatile bool heartbeat = false;
 
 
 /******************* HWIs ******************/

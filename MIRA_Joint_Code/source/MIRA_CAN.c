@@ -18,16 +18,18 @@ void CAN_ISR(void) {
 
     switch(Status) {
     case RX_JOINT_POS: // message received
-        // Reset the flags?
-        CAN_RX_Joint_Pos.ui32Flags = MSG_OBJ_RX_INT_ENABLE;
-
+        // Set message size
         CAN_RX_Joint_Pos.ui32MsgLen = sizeof(RX_Joint_Angle_Data);
 
         // Set message data pointer
         CAN_RX_Joint_Pos.pui8MsgData = (uint8_t *) RX_Joint_Angle_Data;
 
+        IntMasterDisable();
+
         // Get message data
         CANMessageGet(CAN0_BASE, RX_JOINT_POS, &CAN_RX_Joint_Pos, 1);
+
+        IntMasterEnable();
 
         // Increment received message count
         RX0_Message_Count++;
@@ -43,8 +45,12 @@ void CAN_ISR(void) {
         // Set the message data pointer
         CAN_RX_Init_Encoder.pui8MsgData = (uint8_t *) &RX_Init_Encoder_Data;
 
+        IntMasterDisable();
+
         // Get message data
         CANMessageGet(CAN0_BASE, INIT_ENCODER, &CAN_RX_Init_Encoder, 1);
+
+        IntMasterEnable();
 
         // Increment a counter to keep track of how many messages have been received.
         RX0_Message_Count++;
@@ -60,8 +66,12 @@ void CAN_ISR(void) {
         // Set the message pointer
         CAN_RX_Init_PIDP.pui8MsgData = (uint8_t *) &RX_Init_PIDP_Data;
 
+        IntMasterDisable();
+
         // Get message data
         CANMessageGet(CAN0_BASE, INIT_PIDP, &CAN_RX_Init_PIDP, 1);
+
+        IntMasterEnable();
 
         // Increment a counter to keep track of how many messages have been received.
         RX0_Message_Count++;
@@ -77,8 +87,12 @@ void CAN_ISR(void) {
         // Set the message pointer
         CAN_RX_Init_PIDI.pui8MsgData = (uint8_t *) &RX_Init_PIDI_Data;
 
+        IntMasterDisable();
+
         // Get message data
         CANMessageGet(CAN0_BASE, INIT_PIDI, &CAN_RX_Init_PIDI, 1);
+
+        IntMasterEnable();
 
         // Increment a counter to keep track of how many messages have been received.
         RX0_Message_Count++;
@@ -94,8 +108,12 @@ void CAN_ISR(void) {
         // Set the message pointer
         CAN_RX_Init_PIDD.pui8MsgData = (uint8_t *) &RX_Init_PIDD_Data;
 
+        IntMasterDisable();
+
         // Get message data
         CANMessageGet(CAN0_BASE, INIT_PIDD, &CAN_RX_Init_PIDD, 1);
+
+        IntMasterEnable();
 
         // Increment a counter to keep track of how many messages have been received.
         RX0_Message_Count++;
@@ -109,7 +127,10 @@ void CAN_ISR(void) {
 
     case TX_JOINT_POS:
         // Set to receive so the controller doesn't spam messages
-        CANMessageGet(CAN0_BASE, TX_JOINT_POS, &CAN_TX_Joint_Pos, MSG_OBJ_TYPE_RX_REMOTE);
+        CANMessageSet(CAN0_BASE, TX_JOINT_POS, &CAN_TX_Joint_Pos, MSG_OBJ_TYPE_RX_REMOTE);
+
+        // Clear the interrupt
+        CANIntClear(CAN0_BASE, TX_JOINT_POS);
 
         // Increment a counter to keep track of how many messages have been transmitted.
         TX0_Message_Count++;
@@ -120,7 +141,9 @@ void CAN_ISR(void) {
     default: // status or other interrupt: clear it and set error flags
         CAN_Error_Flag |= CANStatusGet(CAN0_BASE, CAN_STS_CONTROL);
         CAN_Error_Handler();
+        IntMasterDisable();
         CANIntClear(CAN0_BASE, Status);
+        IntMasterEnable();
     }
 }
 

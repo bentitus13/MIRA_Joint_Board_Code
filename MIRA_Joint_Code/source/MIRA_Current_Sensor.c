@@ -9,7 +9,9 @@
 
 /******************* HWIs ******************/
 void Current_Sensor_ISR(void) {
+    IntMasterDisable();
     ADCIntClear(ADC0_BASE, 0);
+    IntMasterEnable();
     ADCSequenceDataGet(ADC0_BASE, 0, &Current_Sensor_Value);
 }
 
