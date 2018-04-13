@@ -19,7 +19,7 @@ void CAN_ISR(void) {
     if (Status == Joints[0].RX_Object_Number) { // message received
 
         // Set message data pointer
-        Joints[0].CAN_RX_Joint.pui8MsgData = (uint8_t *) Joints[0].RX_Data;
+        Joints[0].CAN_RX_Joint.pui8MsgData = (uint8_t *) &Joints[0].RX_Data;
 
         // Get message data
         CANMessageGet(CAN0_BASE, Joints[0].RX_Object_Number, &Joints[0].CAN_RX_Joint, 1);
@@ -35,7 +35,7 @@ void CAN_ISR(void) {
     } else if (Status == Joints[1].RX_Object_Number) { // message received
 
         // Set message data pointer
-        Joints[1].CAN_RX_Joint.pui8MsgData = (uint8_t *) Joints[1].RX_Data;
+        Joints[1].CAN_RX_Joint.pui8MsgData = (uint8_t *) &Joints[1].RX_Data;
 
         // Get message data
         CANMessageGet(CAN0_BASE, Joints[1].RX_Object_Number, &Joints[1].CAN_RX_Joint, 1);
@@ -51,7 +51,7 @@ void CAN_ISR(void) {
     } else if (Status == Joints[2].RX_Object_Number) { // message received
 
         // Set message data pointer
-        Joints[2].CAN_RX_Joint.pui8MsgData = (uint8_t *) Joints[2].RX_Data;
+        Joints[2].CAN_RX_Joint.pui8MsgData = (uint8_t *) &Joints[2].RX_Data;
 
         // Get message data
         CANMessageGet(CAN0_BASE, Joints[2].RX_Object_Number, &Joints[2].CAN_RX_Joint, 1);
@@ -67,7 +67,7 @@ void CAN_ISR(void) {
     } else if (Status == Joints[3].RX_Object_Number) { // message received
 
         // Set message data pointer
-        Joints[3].CAN_RX_Joint.pui8MsgData = (uint8_t *) Joints[3].RX_Data;
+        Joints[3].CAN_RX_Joint.pui8MsgData = (uint8_t *) &Joints[3].RX_Data;
 
         // Get message data
         CANMessageGet(CAN0_BASE, Joints[3].RX_Object_Number, &Joints[3].CAN_RX_Joint, 1);
@@ -83,7 +83,7 @@ void CAN_ISR(void) {
     } else if (Status == Joints[4].RX_Object_Number) { // message received
 
         // Set message data pointer
-        Joints[4].CAN_RX_Joint.pui8MsgData = (uint8_t *) Joints[4].RX_Data;
+        Joints[4].CAN_RX_Joint.pui8MsgData = (uint8_t *) &Joints[4].RX_Data;
 
         // Get message data
         CANMessageGet(CAN0_BASE, Joints[4].RX_Object_Number, &Joints[4].CAN_RX_Joint, 1);
