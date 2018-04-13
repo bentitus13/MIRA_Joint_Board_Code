@@ -35,6 +35,10 @@ void Pin_Setup(void) {
     GPIOPinTypeGPIOOutput(HEARTBEAT_PORT, HEARTBEAT_PIN);
 
 
+    // PB5 is boosterpack heartbeat
+    GPIOPinTypeGPIOOutput(HEARTBEAT1_PORT, HEARTBEAT1_PIN);
+
+
     // Initialize motor PWM output
     GPIOPinConfigure(MOTOR_PWM_CONFIG);
     GPIOPinTypePWM(MOTOR_PWM_PORT, MOTOR_PWM_PIN);
