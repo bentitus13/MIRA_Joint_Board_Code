@@ -18,21 +18,28 @@ void CAN_ISR(void) {
 
     switch(Status) {
     case RX_JOINT_POS: // message received
+//        GPIOPinWrite(GPIO_PORTF_BASE, HEARTBEAT_PIN, HEARTBEAT_PIN);
         // Set message data pointer
-        CAN_RX_Joint_Pos.pui8MsgData = (uint8_t *) RX_Joint_Angle_Data;
+        CAN_RX_Joint_Pos.pui8MsgData = (uint8_t *) &RX_Joint_Angle_Data;
 
-        IntMasterDisable();
+//        IntMasterDisable();
 
         // Get message data
+//        CAN_Msg_Get(&CAN_RX_Joint_Pos);
         CANMessageGet(CAN0_BASE, RX_JOINT_POS, &CAN_RX_Joint_Pos, 1);
+//        CANIntClear(CAN0_BASE, RX_JOINT_POS);
+//        HWREG(CAN0_BASE + CAN_O_IF2MCTL) &= 0x5FFF;
+//        RX_Joint_Angle_Data = (HWREG(CAN0_BASE + CAN_O_IF2DA1) & 0x00FF) << 8;
+//        RX_Joint_Angle_Data |= (HWREG(CAN0_BASE + CAN_O_IF2DA1) & 0xFF00) >> 8;
 
-        IntMasterEnable();
+//        IntMasterEnable();
 
         // Increment received message count
         RX0_Message_Count++;
 
         // Since a message was transmitted, clear any error flags.
         CAN_Error_Flag = 0;
+//        GPIOPinWrite(GPIO_PORTF_BASE, HEARTBEAT_PIN, 0);
 
         // Set flag that message was reeived
 //        RX0_Flag = 1;
@@ -42,12 +49,10 @@ void CAN_ISR(void) {
         // Set the message data pointer
         CAN_RX_Init_Encoder.pui8MsgData = (uint8_t *) &RX_Init_Encoder_Data;
 
-        IntMasterDisable();
-
         // Get message data
         CANMessageGet(CAN0_BASE, INIT_ENCODER, &CAN_RX_Init_Encoder, 1);
 
-        IntMasterEnable();
+        RX_Init_Encoder_Data &= 0x0FFF;
 
         // Increment a counter to keep track of how many messages have been received.
         RX0_Message_Count++;
@@ -63,12 +68,8 @@ void CAN_ISR(void) {
         // Set the message pointer
         CAN_RX_Init_PIDP.pui8MsgData = (uint8_t *) &RX_Init_PIDP_Data;
 
-        IntMasterDisable();
-
         // Get message data
         CANMessageGet(CAN0_BASE, INIT_PIDP, &CAN_RX_Init_PIDP, 1);
-
-        IntMasterEnable();
 
         // Increment a counter to keep track of how many messages have been received.
         RX0_Message_Count++;
@@ -84,12 +85,8 @@ void CAN_ISR(void) {
         // Set the message pointer
         CAN_RX_Init_PIDI.pui8MsgData = (uint8_t *) &RX_Init_PIDI_Data;
 
-        IntMasterDisable();
-
         // Get message data
         CANMessageGet(CAN0_BASE, INIT_PIDI, &CAN_RX_Init_PIDI, 1);
-
-        IntMasterEnable();
 
         // Increment a counter to keep track of how many messages have been received.
         RX0_Message_Count++;
@@ -105,12 +102,8 @@ void CAN_ISR(void) {
         // Set the message pointer
         CAN_RX_Init_PIDD.pui8MsgData = (uint8_t *) &RX_Init_PIDD_Data;
 
-        IntMasterDisable();
-
         // Get message data
         CANMessageGet(CAN0_BASE, INIT_PIDD, &CAN_RX_Init_PIDD, 1);
-
-        IntMasterEnable();
 
         // Increment a counter to keep track of how many messages have been received.
         RX0_Message_Count++;
@@ -138,9 +131,7 @@ void CAN_ISR(void) {
     default: // status or other interrupt: clear it and set error flags
         CAN_Error_Flag |= CANStatusGet(CAN0_BASE, CAN_STS_CONTROL);
         CAN_Error_Handler();
-        IntMasterDisable();
         CANIntClear(CAN0_BASE, Status);
-        IntMasterEnable();
     }
 }
 
@@ -162,7 +153,7 @@ void CAN_Send(void) {
         if (CAN_Error_Flag == 0) {
 
             // Set message data pointer
-            CAN_TX_Joint_Pos.pui8MsgData = (uint8_t *) TX_Joint_Pos_Data;
+            CAN_TX_Joint_Pos.pui8MsgData = (uint8_t *) &TX_Joint_Pos_Data;
 
             // Send the CAN message using object number 2
             CANMessageSet(CAN0_BASE, TX_JOINT_POS, &CAN_TX_Joint_Pos, MSG_OBJ_TYPE_TX);
@@ -285,7 +276,7 @@ void CAN_Read_ID(void) {
 }
 
 void Setup_TX_Joint_Pos(void) {
-    CAN_TX_Joint_Pos.ui32MsgID = TX_JOINT_ANGLE_ID;                            // Set ID to Base module address
+    CAN_TX_Joint_Pos.ui32MsgID = Message_ID | TX_JOINT_ANGLE_ID;                            // Set ID to Base module address
     CAN_TX_Joint_Pos.ui32MsgIDMask = 0;                                        // Set mask to 0, doesn't matter for this
     CAN_TX_Joint_Pos.ui32Flags = MSG_OBJ_TX_INT_ENABLE;                        // Set TX interrupt flag
     CAN_TX_Joint_Pos.ui32MsgLen = sizeof(TX_Joint_Pos_Data);                   // Set length to 1 byte
@@ -346,7 +337,7 @@ void CAN_Setup(void) {
     CANInit(CAN0_BASE);             // Initialize CAN0 controller
     CANBitRateSet(CAN0_BASE,        // Set CAN0 to run at 1Mbps
                   SysCtlClockGet(),
-                  1000000);
+                  500000);
     CANIntEnable(CAN0_BASE,         // Enable interrupts, error interrupts, and status interrupts
                  CAN_INT_MASTER |
                  CAN_INT_ERROR  |

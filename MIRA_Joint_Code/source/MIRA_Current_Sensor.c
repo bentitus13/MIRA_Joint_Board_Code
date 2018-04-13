@@ -9,9 +9,7 @@
 
 /******************* HWIs ******************/
 void Current_Sensor_ISR(void) {
-    IntMasterDisable();
-    ADCIntClear(ADC0_BASE, 0);
-    IntMasterEnable();
+    ADCIntClearEx(ADC0_BASE, ADC_INT_SS0);
     ADCSequenceDataGet(ADC0_BASE, 0, &Current_Sensor_Value);
 }
 
@@ -38,18 +36,18 @@ void Current_Sensor_Calculate(void) {
 /************* Setup Functions *************/
 void Current_Sensor_Setup(void) {
     // Enable Timer1
-    SysCtlPeripheralEnable(SYSCTL_PERIPH_TIMER1);
-    TimerDisable(TIMER1_BASE, TIMER_BOTH);
+    SysCtlPeripheralEnable(SYSCTL_PERIPH_TIMER0);
+    TimerDisable(TIMER0_BASE, TIMER_BOTH);
     // Set clock source
-    TimerClockSourceSet(TIMER1_BASE, TIMER_CLOCK_SYSTEM);
+    TimerClockSourceSet(TIMER0_BASE, TIMER_CLOCK_SYSTEM);
     // Set to periodic
-    TimerConfigure(TIMER1_BASE, TIMER_CFG_A_PERIODIC);
+    TimerConfigure(TIMER0_BASE, TIMER_CFG_A_PERIODIC);
     // Set the prescaler to 1
-    TimerPrescaleSet(TIMER1_BASE, TIMER_A, 1);
+    TimerPrescaleSet(TIMER0_BASE, TIMER_A, 1);
     // Set load value
-    TimerLoadSet(TIMER1_BASE, TIMER_A, 0x0FFFF);
+    TimerLoadSet(TIMER0_BASE, TIMER_A, 0x1FFFF);
     // Set time to trigger ADC
-    TimerControlTrigger(TIMER1_BASE, TIMER_A, true);
+    TimerControlTrigger(TIMER0_BASE, TIMER_A, true);
     // Set compare value
 //    TimerMatchSet(TIMER1_BASE, TIMER_A, 0x07FFF);
 //    // Enable timeout interrupt
@@ -57,7 +55,7 @@ void Current_Sensor_Setup(void) {
 //    // Register ISR
 //    TimerIntRegister(TIMER1_BASE, TIMER_A, &timerISR);
     // Enable Timer1A
-    TimerEnable(TIMER1_BASE, TIMER_A);
+    TimerEnable(TIMER0_BASE, TIMER_A);
 
     // Initialize ADC0 Module
     SysCtlPeripheralEnable(SYSCTL_PERIPH_ADC0);
@@ -78,7 +76,7 @@ void Current_Sensor_Setup(void) {
 //    ADCClockConfigSet(ADC0_BASE, ADC_CLOCK_SRC_PIOSC | ADC_CLOCK_RATE_FULL, 2);
 
     // Trigger when the processor tells it to (one shot)
-    ADCSequenceConfigure(ADC0_BASE, 0, ADC_TRIGGER_ALWAYS, 0);
+    ADCSequenceConfigure(ADC0_BASE, 0, ADC_TRIGGER_ALWAYS, 1);
 
     // Take a sample and interrupt
     ADCSequenceStepConfigure(ADC0_BASE, 0, 0, ADC_CTL_CH3 | ADC_CTL_IE | ADC_CTL_END);
@@ -92,5 +90,4 @@ void Current_Sensor_Setup(void) {
     // Enable interrupts for sequence 0
     ADCIntEnable(ADC0_BASE, 0);
 //    ADCIntRegister(ADC0_BASE, 0, &getADC);
-
 }

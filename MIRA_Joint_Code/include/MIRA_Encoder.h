@@ -43,13 +43,14 @@
 
 
 /************ Local Header files ***********/
+#include "include/MIRA_CAN.h"
 
 
 /***************** Defines *****************/
 #define READ_ANGLE              0x3FFF         // Data to send over SSI to read angle from AS5055
 #define ENCODER_WRAP(val)       (0x0FFF & val) // Wrap encoder value to 0-4096
 #define ENCODER_INDEX_WRAP(val) (0x07 & val)   // Wrap encoder index to 0-8
-#define ALPHA                   0.8            // Coefficient for exponential filter
+#define ALPHA                   0.85           // Coefficient for exponential filter
 
 
 /*********** Function Prototypes ***********/

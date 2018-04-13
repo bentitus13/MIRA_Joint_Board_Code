@@ -111,7 +111,7 @@ void Init_Stuff(void) {
 
 
 // Main, call all setup functions and start BIOS
-int main(void) {
+    int main(void) {
     // Disable interrupts
     IntMasterDisable();
 

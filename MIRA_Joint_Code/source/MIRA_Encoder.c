@@ -16,9 +16,11 @@ void SSI_ISR(void) {
     Encoder_Value = Encoder_Value >> 1;
     if (Encoder_Value < 4095 && Encoder_Value > 0) {
         // Exponential filter to clean out the spikes in encoder reading
-        Encoder_Value = (1-ALPHA) * Encoder_Value + ALPHA * Encoder_Values[Encoder_Index];
-        Encoder_Index = 0x07 & (Encoder_Index + 1);
-        Encoder_Values[Encoder_Index] = Encoder_Value;
+        Encoder_Value = (1.-ALPHA) * Encoder_Value + ALPHA * Encoder_Values[(0x07&Encoder_Index)];
+        if (Encoder_Value < 4095 && Encoder_Value > 0) {
+            Encoder_Index = 0x07 & (Encoder_Index + 1);
+            Encoder_Values[Encoder_Index] = Encoder_Value;
+        }
     }
 }
 
@@ -54,10 +56,12 @@ void SSI_Transmit(void) {
         Temp_Value = Temp_Value / 8;
 
         // Offset Temp_Value by the encoder home position offset
-        Temp_Value = (0x0FFF & (Temp_Value - Encoder_Offset));
+        Temp_Value = (0x0FFF & (Temp_Value - RX_Init_Encoder_Data));
 
         // Convert Temp_Value to angle from home position
         Joint_Angle = 360. / 4096. * Temp_Value;
+
+        TX_Joint_Pos_Data = Temp_Value;
     }
 }
 
@@ -94,4 +98,5 @@ void SSI_Setup(void) {
     SSIConfigSetExpClk(SSI0_BASE, SysCtlClockGet(), SSI_FRF_MOTO_MODE_0, SSI_MODE_MASTER, 5000000, 16);
     SSIIntEnable(SSI0_BASE, SSI_RXFF);
     SSIEnable(SSI0_BASE);
+    Encoder_Index = 0;
 }

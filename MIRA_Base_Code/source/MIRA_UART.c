@@ -64,7 +64,7 @@ void UART_Init(void) {
             Joints[Init_Joint_Number].CAN_TX_Joint.ui32MsgID = Joints[Init_Joint_Number].Joint_Board_ID << 5;
 
             // Set up receive ID in upper 6 bits
-            Joints[Init_Joint_Number].CAN_RX_Joint.ui32MsgID = Joints[Init_Joint_Number].Joint_Board_ID << 5;
+            Joints[Init_Joint_Number].CAN_RX_Joint.ui32MsgID |= Joints[Init_Joint_Number].Joint_Board_ID << 5;
 
             // Set up Encoder offset
             Joints[Init_Joint_Number].TX_Init_Encoder_Data = 1000*(Init_Data[4]-0x30) +
@@ -91,6 +91,9 @@ void UART_Init(void) {
                                                           0.01*(Init_Data[19]-0x30);
 
             UART_Print(Ack_Pointer, Ack_Pointer_Length);
+
+            CANMessageSet(CAN0_BASE, Joints[Init_Joint_Number].RX_Object_Number,
+                          &Joints[Init_Joint_Number].CAN_RX_Joint, MSG_OBJ_TYPE_RX);
 
 //            Init_Data_Index = 0;
             if (Init_Joint_Number == 5) {

@@ -22,7 +22,7 @@ void CAN_ISR(void) {
         Joints[0].CAN_RX_Joint.pui8MsgData = (uint8_t *) Joints[0].RX_Data;
 
         // Get message data
-        CANMessageGet(CAN0_BASE, Joints[0].RX_Object_Number, &Joints[0].CAN_TX_Joint, 1);
+        CANMessageGet(CAN0_BASE, Joints[0].RX_Object_Number, &Joints[0].CAN_RX_Joint, 1);
 
         // Increment received message count
         RX0_Mesage_Count++;
@@ -38,7 +38,7 @@ void CAN_ISR(void) {
         Joints[1].CAN_RX_Joint.pui8MsgData = (uint8_t *) Joints[1].RX_Data;
 
         // Get message data
-        CANMessageGet(CAN0_BASE, Joints[1].RX_Object_Number, &Joints[1].CAN_TX_Joint, 1);
+        CANMessageGet(CAN0_BASE, Joints[1].RX_Object_Number, &Joints[1].CAN_RX_Joint, 1);
 
         // Increment received message count
         RX0_Mesage_Count++;
@@ -54,7 +54,7 @@ void CAN_ISR(void) {
         Joints[2].CAN_RX_Joint.pui8MsgData = (uint8_t *) Joints[2].RX_Data;
 
         // Get message data
-        CANMessageGet(CAN0_BASE, Joints[2].RX_Object_Number, &Joints[2].CAN_TX_Joint, 1);
+        CANMessageGet(CAN0_BASE, Joints[2].RX_Object_Number, &Joints[2].CAN_RX_Joint, 1);
 
         // Increment received message count
         RX0_Mesage_Count++;
@@ -70,7 +70,7 @@ void CAN_ISR(void) {
         Joints[3].CAN_RX_Joint.pui8MsgData = (uint8_t *) Joints[3].RX_Data;
 
         // Get message data
-        CANMessageGet(CAN0_BASE, Joints[3].RX_Object_Number, &Joints[3].CAN_TX_Joint, 1);
+        CANMessageGet(CAN0_BASE, Joints[3].RX_Object_Number, &Joints[3].CAN_RX_Joint, 1);
 
         // Increment received message count
         RX0_Mesage_Count++;
@@ -86,7 +86,7 @@ void CAN_ISR(void) {
         Joints[4].CAN_RX_Joint.pui8MsgData = (uint8_t *) Joints[4].RX_Data;
 
         // Get message data
-        CANMessageGet(CAN0_BASE, Joints[4].RX_Object_Number, &Joints[4].CAN_TX_Joint, 1);
+        CANMessageGet(CAN0_BASE, Joints[4].RX_Object_Number, &Joints[4].CAN_RX_Joint, 1);
 
         // Increment received message count
         RX0_Mesage_Count++;
@@ -99,10 +99,14 @@ void CAN_ISR(void) {
     } else if (Status == Joints[5].RX_Object_Number) { // message received
 
         // Set message data pointer
-        Joints[5].CAN_RX_Joint.pui8MsgData = (uint8_t *) Joints[5].RX_Data;
+        Joints[5].CAN_RX_Joint.pui8MsgData = (uint8_t *) &Joints[5].RX_Data;
 
         // Get message data
-        CANMessageGet(CAN0_BASE, Joints[5].RX_Object_Number, &Joints[5].CAN_TX_Joint, 1);
+        CANMessageGet(CAN0_BASE, Joints[5].RX_Object_Number, &Joints[5].CAN_RX_Joint, 1);
+
+//        Joints[5].RX_Data[0] = (HWREG(CAN0_BASE + CAN_O_IF2DA1) & 0x00FF) << 8;
+//        Joints[5].RX_Data[0] |= (HWREG(CAN0_BASE + CAN_O_IF2DA1) & 0xFF00) >> 8;
+//        HWREG(CAN0_BASE + CAN_O_IF2MCTL) &= 0x5FFF;
 
         // Increment received message count
         RX0_Mesage_Count++;
@@ -221,7 +225,7 @@ void CAN_Init(void) {
                     Joints[i].CAN_TX_Joint.ui32MsgID &= 0x7E0;
                     Joints[i].CAN_TX_Joint.ui32MsgID |= INIT_ENCODER;
                     Joints[i].CAN_TX_Joint.ui32MsgLen = sizeof(Joints[i].TX_Init_Encoder_Data);
-                    Joints[i].CAN_TX_Joint.pui8MsgData = (uint8_t *) Joints[i].TX_Init_Encoder_Data;
+                    Joints[i].CAN_TX_Joint.pui8MsgData = (uint8_t *) &Joints[i].TX_Init_Encoder_Data;
                     CANMessageSet(CAN0_BASE, Joints[i].TX_Object_Number, &Joints[i].CAN_TX_Joint, MSG_OBJ_TYPE_TX);
                 }
                 CAN_State = 1;
@@ -278,10 +282,8 @@ void CAN_Send(void) {
                 Joints[i].CAN_TX_Joint.ui32MsgID &= 0x7E0;
                 Joints[i].CAN_TX_Joint.ui32MsgID |= TX_JOINT_POS;
                 Joints[i].CAN_TX_Joint.ui32MsgLen = sizeof(Joints[i].TX_Data[0]);
-                Joints[i].CAN_TX_Joint.pui8MsgData = (uint8_t *) Joints[i].TX_Data[0];
+                Joints[i].CAN_TX_Joint.pui8MsgData = (uint8_t *) &Joints[i].TX_Data[0];
                 CANMessageSet(CAN0_BASE, Joints[i].TX_Object_Number, &Joints[i].CAN_TX_Joint, MSG_OBJ_TYPE_TX);
-                Joints[i].TX_Data[0] += 1;
-                Joints[i].TX_Data[0] &= 4095;
             }
         }
     }
@@ -434,8 +436,8 @@ void Setup_TX_Joint6(void) {
 // Set up the TX_All message object
 void Setup_RX_Joint1(void) {
     Joints[0].CAN_RX_Joint.ui32MsgID = RX_JOINT_POS;                     // Set ID to Base module address
-    Joints[0].CAN_RX_Joint.ui32MsgIDMask = 0x7E0;                        // Set mask to 0, doesn't matter for this
-    Joints[0].CAN_RX_Joint.ui32Flags = MSG_OBJ_RX_INT_ENABLE;            // Set TX interrupt flag
+    Joints[0].CAN_RX_Joint.ui32MsgIDMask = 0xFFF;                        // Set mask to 0, doesn't matter for this
+    Joints[0].CAN_RX_Joint.ui32Flags = MSG_OBJ_RX_INT_ENABLE | MSG_OBJ_USE_ID_FILTER;            // Set TX interrupt flag
     Joints[0].CAN_RX_Joint.ui32MsgLen = sizeof(Joints[0].RX_Data);       // Set length to 1 byte
     Joints[0].CAN_RX_Joint.pui8MsgData = (uint8_t *) Joints[0].RX_Data;  // Set the message data pointer
     CANMessageSet(CAN0_BASE, Joints[0].RX_Object_Number, &Joints[0].CAN_RX_Joint, MSG_OBJ_TYPE_RX);
@@ -443,51 +445,51 @@ void Setup_RX_Joint1(void) {
 
 // Set up the TX_All message object
 void Setup_RX_Joint2(void) {
-    Joints[0].CAN_RX_Joint.ui32MsgID = RX_JOINT_POS;                     // Set ID to Base module address
-    Joints[0].CAN_RX_Joint.ui32MsgIDMask = 0x7E0;                        // Set mask to 0, doesn't matter for this
-    Joints[0].CAN_RX_Joint.ui32Flags = MSG_OBJ_RX_INT_ENABLE;            // Set TX interrupt flag
-    Joints[0].CAN_RX_Joint.ui32MsgLen = sizeof(Joints[1].RX_Data);       // Set length to 1 byte
-    Joints[0].CAN_RX_Joint.pui8MsgData = (uint8_t *) Joints[1].RX_Data;  // Set the message data pointer
+    Joints[1].CAN_RX_Joint.ui32MsgID = RX_JOINT_POS;                     // Set ID to Base module address
+    Joints[1].CAN_RX_Joint.ui32MsgIDMask = 0xFFF;                        // Set mask to 0, doesn't matter for this
+    Joints[1].CAN_RX_Joint.ui32Flags = MSG_OBJ_RX_INT_ENABLE | MSG_OBJ_USE_ID_FILTER;            // Set TX interrupt flag
+    Joints[1].CAN_RX_Joint.ui32MsgLen = sizeof(Joints[1].RX_Data);       // Set length to 1 byte
+    Joints[1].CAN_RX_Joint.pui8MsgData = (uint8_t *) Joints[1].RX_Data;  // Set the message data pointer
     CANMessageSet(CAN0_BASE, Joints[1].RX_Object_Number, &Joints[1].CAN_RX_Joint, MSG_OBJ_TYPE_RX);
 }
 
 // Set up the TX_All message object
 void Setup_RX_Joint3(void) {
-    Joints[0].CAN_RX_Joint.ui32MsgID = RX_JOINT_POS;                     // Set ID to Base module address
-    Joints[0].CAN_RX_Joint.ui32MsgIDMask = 0x7E0;                        // Set mask to 0, doesn't matter for this
-    Joints[0].CAN_RX_Joint.ui32Flags = MSG_OBJ_RX_INT_ENABLE;            // Set TX interrupt flag
-    Joints[0].CAN_RX_Joint.ui32MsgLen = sizeof(Joints[2].RX_Data);       // Set length to 1 byte
-    Joints[0].CAN_RX_Joint.pui8MsgData = (uint8_t *) Joints[2].RX_Data;  // Set the message data pointer
+    Joints[2].CAN_RX_Joint.ui32MsgID = RX_JOINT_POS;                     // Set ID to Base module address
+    Joints[2].CAN_RX_Joint.ui32MsgIDMask = 0xFFF;                        // Set mask to 0, doesn't matter for this
+    Joints[2].CAN_RX_Joint.ui32Flags = MSG_OBJ_RX_INT_ENABLE | MSG_OBJ_USE_ID_FILTER;            // Set TX interrupt flag
+    Joints[2].CAN_RX_Joint.ui32MsgLen = sizeof(Joints[2].RX_Data);       // Set length to 1 byte
+    Joints[2].CAN_RX_Joint.pui8MsgData = (uint8_t *) Joints[2].RX_Data;  // Set the message data pointer
     CANMessageSet(CAN0_BASE, Joints[2].RX_Object_Number, &Joints[2].CAN_RX_Joint, MSG_OBJ_TYPE_RX);
 }
 
 // Set up the TX_All message object
 void Setup_RX_Joint4(void) {
-    Joints[0].CAN_RX_Joint.ui32MsgID = RX_JOINT_POS;                     // Set ID to Base module address
-    Joints[0].CAN_RX_Joint.ui32MsgIDMask = 0x7E0;                        // Set mask to 0, doesn't matter for this
-    Joints[0].CAN_RX_Joint.ui32Flags = MSG_OBJ_RX_INT_ENABLE;            // Set TX interrupt flag
-    Joints[0].CAN_RX_Joint.ui32MsgLen = sizeof(Joints[3].RX_Data);       // Set length to 1 byte
-    Joints[0].CAN_RX_Joint.pui8MsgData = (uint8_t *) Joints[3].RX_Data;  // Set the message data pointer
+    Joints[3].CAN_RX_Joint.ui32MsgID = RX_JOINT_POS;                     // Set ID to Base module address
+    Joints[3].CAN_RX_Joint.ui32MsgIDMask = 0xFFF;                        // Set mask to 0, doesn't matter for this
+    Joints[3].CAN_RX_Joint.ui32Flags = MSG_OBJ_RX_INT_ENABLE | MSG_OBJ_USE_ID_FILTER;            // Set TX interrupt flag
+    Joints[3].CAN_RX_Joint.ui32MsgLen = sizeof(Joints[3].RX_Data);       // Set length to 1 byte
+    Joints[3].CAN_RX_Joint.pui8MsgData = (uint8_t *) Joints[3].RX_Data;  // Set the message data pointer
     CANMessageSet(CAN0_BASE, Joints[3].RX_Object_Number, &Joints[3].CAN_RX_Joint, MSG_OBJ_TYPE_RX);
 }
 
 // Set up the TX_All message object
 void Setup_RX_Joint5(void) {
-    Joints[0].CAN_RX_Joint.ui32MsgID = RX_JOINT_POS;                     // Set ID to Base module address
-    Joints[0].CAN_RX_Joint.ui32MsgIDMask = 0x7E0;                        // Set mask to 0, doesn't matter for this
-    Joints[0].CAN_RX_Joint.ui32Flags = MSG_OBJ_RX_INT_ENABLE;            // Set TX interrupt flag
-    Joints[0].CAN_RX_Joint.ui32MsgLen = sizeof(Joints[4].RX_Data);       // Set length to 1 byte
-    Joints[0].CAN_RX_Joint.pui8MsgData = (uint8_t *) Joints[4].RX_Data;  // Set the message data pointer
+    Joints[4].CAN_RX_Joint.ui32MsgID = RX_JOINT_POS;                     // Set ID to Base module address
+    Joints[4].CAN_RX_Joint.ui32MsgIDMask = 0xFFF;                        // Set mask to 0, doesn't matter for this
+    Joints[4].CAN_RX_Joint.ui32Flags = MSG_OBJ_RX_INT_ENABLE | MSG_OBJ_USE_ID_FILTER;            // Set TX interrupt flag
+    Joints[4].CAN_RX_Joint.ui32MsgLen = sizeof(Joints[4].RX_Data);       // Set length to 1 byte
+    Joints[4].CAN_RX_Joint.pui8MsgData = (uint8_t *) Joints[4].RX_Data;  // Set the message data pointer
     CANMessageSet(CAN0_BASE, Joints[4].RX_Object_Number, &Joints[4].CAN_RX_Joint, MSG_OBJ_TYPE_RX);
 }
 
 // Set up the TX_All message object
 void Setup_RX_Joint6(void) {
-    Joints[0].CAN_RX_Joint.ui32MsgID = RX_JOINT_POS;                     // Set ID to Base module address
-    Joints[0].CAN_RX_Joint.ui32MsgIDMask = 0x7E0;                        // Set mask to 0, doesn't matter for this
-    Joints[0].CAN_RX_Joint.ui32Flags = MSG_OBJ_RX_INT_ENABLE;            // Set TX interrupt flag
-    Joints[0].CAN_RX_Joint.ui32MsgLen = sizeof(Joints[5].RX_Data);       // Set length to 1 byte
-    Joints[0].CAN_RX_Joint.pui8MsgData = (uint8_t *) Joints[5].RX_Data;  // Set the message data pointer
+    Joints[5].CAN_RX_Joint.ui32MsgID = RX_JOINT_POS;                     // Set ID to Base module address
+    Joints[5].CAN_RX_Joint.ui32MsgIDMask = 0xFFF;                        // Set mask to 0, doesn't matter for this
+    Joints[5].CAN_RX_Joint.ui32Flags = MSG_OBJ_RX_INT_ENABLE | MSG_OBJ_USE_ID_FILTER;            // Set TX interrupt flag
+    Joints[5].CAN_RX_Joint.ui32MsgLen = sizeof(Joints[5].RX_Data[0]);       // Set length to 1 byte
+    Joints[5].CAN_RX_Joint.pui8MsgData = (uint8_t *) Joints[5].RX_Data[0];  // Set the message data pointer
     CANMessageSet(CAN0_BASE, Joints[5].RX_Object_Number, &Joints[5].CAN_RX_Joint, MSG_OBJ_TYPE_RX);
 }
 
@@ -500,7 +502,7 @@ void CAN_Setup(void) {
     CANInit(CAN0_BASE);             // Initialize CAN0 controller
     CANBitRateSet(CAN0_BASE,        // Set CAN0 to run at 1Mbps
                   SysCtlClockGet(),
-                  1000000);
+                  500000);
     CANIntEnable(CAN0_BASE,         // Enable interrupts, error interrupts, and status interrupts
                  CAN_INT_MASTER |
                  CAN_INT_ERROR  |

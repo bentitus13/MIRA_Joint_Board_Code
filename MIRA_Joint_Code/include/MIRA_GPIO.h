@@ -65,7 +65,7 @@
 #define MOTOR_DIR_PORT     GPIO_PORTB_BASE  // Pin B7
 
 #define MOTOR_PWM_PIN      GPIO_PIN_6       // Pin B6
-#define MOTOR_DIR_PIN      GPIO_PIN_7       // Pin B7
+#define MOTOR_DIR_PIN      GPIO_PIN_2       // Pin B2
 
 #define MOTOR_PWM_CONFIG   GPIO_PB6_M0PWM0  // Pin B6
 
