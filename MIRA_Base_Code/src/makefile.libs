@@ -1,6 +1,6 @@
 #
 # This file was generated based on the configuration script:
-#     C:\Users\Ben\Documents\MQP_Code\MIRA_Joint_Board_Code\MIRA_Joint_Code\MIRA_Joint_Board_Config.cfg
+#     C:\Users\Ben\Documents\MQP_Code\MIRA_Joint_Board_Code\MIRA_Base_Code\MIRA_Base_Config.cfg
 #
 # This makefile may be included in other makefiles that need to build
 # the libraries containing the compiled source files generated as
@@ -14,7 +14,7 @@
 #
 # The absolute path to the generated source directory (at the time the
 # sources were generated) is:
-#    C:\Users\Ben\Documents\MQP_Code\MIRA_Joint_Board_Code\MIRA_Joint_Code\src
+#    C:\Users\Ben\Documents\MQP_Code\MIRA_Joint_Board_Code\MIRA_Base_Code\src
 #
 GEN_SRC_DIR ?= ../src
 

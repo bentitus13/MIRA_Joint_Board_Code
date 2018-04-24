@@ -58,3 +58,4 @@ dkms.conf
 */.launches/*
 .jxbrowser-data/*
 .metadata/*
+*/src/sysbios/*

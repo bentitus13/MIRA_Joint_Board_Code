@@ -1,7 +1,7 @@
 Example Summary
 ----------------
 This example is intended to be a starting point for new development where
-a minimal footprint is needed.
+a fuller set of kernel features and debug capabilities are enabled.
 
 Peripherals Exercised
 ---------------------
@@ -15,13 +15,13 @@ for the constructed Task instance in the .c file.
 
 Application Design Details
 --------------------------
-This examples is the same as the "Empty" example except many development
-and debug features have been removed. For example:
-    - No logging is enabled
-    - No assert checking is enabled
-    - No Kernel Idle task
-    - Non-Instrumented driver modules are used
-    - No stack overflow checking
+This examples is the same as the "Empty (Minimal)" example except many
+development and debug features are enabled. For example:
+    - Logging is enabled
+    - Assert checking is enabled
+    - Kernel Idle task
+    - Stack overflow checking
+    - Default kernel heap is present
 
 Please refer to the "Memory Footprint Reduction" section in the TI-RTOS User
 Guide (spruhd4.pdf) for a complete and detailed list of the differences
