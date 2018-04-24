@@ -32,7 +32,7 @@ void Pin_Setup(void) {
 
 
     // Pf2 is Heartbeat LED (Blue)
-    GPIOPinTypeGPIOOutput(HEARTBEAT_PORT, HEARTBEAT_PIN);
+    GPIOPinTypeGPIOOutput(HEARTBEAT_PORT, HEARTBEAT_RED_PIN | HEARTBEAT_BLUE_PIN);
 
 
     // PB5 is boosterpack heartbeat

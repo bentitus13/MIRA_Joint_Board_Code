@@ -92,7 +92,8 @@
 #define HEARTBEAT_PORT     GPIO_PORTF_BASE  // Pin F2
 #define HEARTBEAT1_PORT     GPIO_PORTB_BASE  // Pin B5
 
-#define HEARTBEAT_PIN      GPIO_PIN_2       // Pin F2
+#define HEARTBEAT_RED_PIN   GPIO_PIN_1       // Pin F1
+#define HEARTBEAT_BLUE_PIN  GPIO_PIN_2       // Pin F2
 #define HEARTBEAT1_PIN      GPIO_PIN_5       // Pin B5
 
 

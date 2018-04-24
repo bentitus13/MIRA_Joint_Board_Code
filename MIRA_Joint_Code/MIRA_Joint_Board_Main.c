@@ -87,11 +87,16 @@ uint32_t Past_Error_Index;
 // Heartbeat that blinks the onboard LED at 1Hz
 void Heartbeat(void) {
     if (heartbeat) {
-        GPIOPinWrite(HEARTBEAT_PORT, HEARTBEAT_PIN, HEARTBEAT_PIN);
+        if (Init_Flag) {
+            GPIOPinWrite(HEARTBEAT_PORT, HEARTBEAT_BLUE_PIN, HEARTBEAT_BLUE_PIN);
+        } else {
+            GPIOPinWrite(HEARTBEAT_PORT, HEARTBEAT_RED_PIN, HEARTBEAT_RED_PIN);
+        }
         GPIOPinWrite(HEARTBEAT1_PORT, HEARTBEAT1_PIN, HEARTBEAT1_PIN);
         heartbeat = false;
     } else {
-        GPIOPinWrite(HEARTBEAT_PORT, HEARTBEAT_PIN, 0);
+        GPIOPinWrite(HEARTBEAT_PORT, HEARTBEAT_BLUE_PIN, 0);
+        GPIOPinWrite(HEARTBEAT_PORT, HEARTBEAT_RED_PIN, 0);
         GPIOPinWrite(HEARTBEAT1_PORT, HEARTBEAT1_PIN, 0);
         heartbeat = true;
     }

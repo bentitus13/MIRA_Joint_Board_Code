@@ -97,7 +97,7 @@ void UART_Init(void) {
 
 //            Init_Data_Index = 0;
             if (Init_Joint_Number == 5) {
-                UART_Print(Startup_Message, Startup_Message_Length);
+//                UART_Print(Startup_Message, Startup_Message_Length);
                 UART_State = 1;
                 Semaphore_post(CAN_Init_Semaphore);
             }

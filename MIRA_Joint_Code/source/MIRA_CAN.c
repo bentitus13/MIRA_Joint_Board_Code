@@ -140,6 +140,7 @@ void CAN_ISR(void) {
 // Release the CAN task, CAN_Send
 void CAN_Timer(void) {
     if (CAN_Init == 0x0F) {
+        Init_Flag = 1;
         Semaphore_post(CAN_Semaphore);
     }
 }
